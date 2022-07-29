@@ -7,12 +7,19 @@ class Connection {
   var _connectionController;
 
   Connection() {
-    _connectionController =
-        checkConnectionWithEsp() ? RestApiController() : BluetoothController();
+    checkConnectionWithEsp().then((value) => {
+          _connectionController =
+              value ? RestApiController() : BluetoothController()
+        });
   }
 
-  bool checkConnectionWithEsp() {
-    throw UnimplementedError("Work in progress");
+  Future<bool> checkConnectionWithEsp() async {
+    var url = Uri.parse('http://srv08.mikr.us:20364/heartbeat/dev');
+    var response = await http.post(url);
+    if (response.body == "Got heartbeat") {
+      return true;
+    }
+    return false;
   }
 }
 
