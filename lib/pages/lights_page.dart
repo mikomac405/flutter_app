@@ -22,9 +22,9 @@ class _LightsPageState extends State<LightsPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            ElevatedButton(
+            const ElevatedButton(
               onPressed: null,
-              child: const Text(
+              child: Text(
                 'On/Off',
                 style: TextStyle(fontSize: 72),
               ),
@@ -33,7 +33,7 @@ class _LightsPageState extends State<LightsPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Column(
-                  children: <Widget>[
+                  children: const <Widget>[
                     Text(
                       "Start time",
                       style: TextStyle(fontSize: 36),
@@ -42,7 +42,7 @@ class _LightsPageState extends State<LightsPage> {
                   ],
                 ),
                 Column(
-                  children: <Widget>[
+                  children: const <Widget>[
                     Text(
                       "Stop time",
                       style: TextStyle(fontSize: 36),

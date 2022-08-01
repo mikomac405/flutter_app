@@ -22,16 +22,16 @@ class _FansPageState extends State<FansPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            ElevatedButton(
+            const ElevatedButton(
               onPressed: null,
-              child: const Text(
+              child: Text(
                 'On/Off',
                 style: TextStyle(fontSize: 72),
               ),
             ),
             Column(
               children: <Widget>[
-                Text(
+                const Text(
                   "Power",
                   style: TextStyle(fontSize: 48),
                 ),
@@ -47,7 +47,7 @@ class _FansPageState extends State<FansPage> {
                 ),
                 Text(
                   _value.toInt().toString() + "%",
-                  style: TextStyle(fontSize: 48),
+                  style: const TextStyle(fontSize: 48),
                 ),
               ],
             )

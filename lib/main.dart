@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:inzynierka/pages/mqtt_test_page.dart';
 import 'pages/fans_page.dart';
 import 'pages/lights_page.dart';
+import 'connection.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,10 +21,11 @@ class MyApp extends StatelessWidget {
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
       routes: <String, WidgetBuilder>{
         '/lightspage': (BuildContext context) =>
-            new LightsPage(title: "LightsPage"),
-        '/fanspage': (BuildContext context) => new FansPage(title: "FansPage"),
+            const LightsPage(title: "LightsPage"),
+        '/fanspage': (BuildContext context) =>
+            const FansPage(title: "FansPage"),
         '/mqtttestpage': (BuildContext context) =>
-            new MqttTestPage(title: "MqttPage")
+            const MqttTestPage(title: "MqttPage")
       },
     );
   }
@@ -43,25 +45,35 @@ class _MyHomePageState extends State<MyHomePage> {
       ? const bool.fromEnvironment("DEV")
       : false;
 
+  var connection = ConnectionManager();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _isDeveloperMode ? Text("App_dev") : Text("App"),
+        title: _isDeveloperMode ? const Text("App_dev") : const Text("App"),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             ElevatedButton(
-                child: Text(
+                child: const Text(
+                  "Print conn type",
+                  style: TextStyle(fontSize: 72),
+                ),
+                onPressed: () =>
+                    // ignore: avoid_print
+                    print(connection.getConnectionType())),
+            ElevatedButton(
+                child: const Text(
                   "Lights",
                   style: TextStyle(fontSize: 72),
                 ),
                 onPressed: () =>
                     Navigator.of(context).pushNamed('/lightspage')),
             ElevatedButton(
-                child: Text(
+                child: const Text(
                   "Fans",
                   style: TextStyle(fontSize: 72),
                 ),
@@ -77,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ElevatedButton(
                   onPressed: () =>
                       Navigator.of(context).pushNamed('/mqtttestpage'),
-                  child: Text(
+                  child: const Text(
                     "MQTT Test",
                     style: TextStyle(fontSize: 72),
                   ))
