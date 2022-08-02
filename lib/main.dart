@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:inzynierka/pages/mqtt_test_page.dart';
-import 'pages/fans_page.dart';
-import 'pages/lights_page.dart';
+import 'package:inzynierka/pages/loadingPage.dart';
+import 'package:inzynierka/pages/mqttTestPage.dart';
 import 'connection.dart';
+import 'pages/fansPage.dart';
+import 'pages/lightsPage.dart';
+import 'pages/homePage.dart';
+import 'pages/wifiPage.dart';
+import 'globals.dart' as globals;
 
 void main() {
+  globals.connection = ConnectionManager();
   runApp(const MyApp());
 }
 
@@ -18,8 +23,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const HomePage(title: 'Flutter Home Page'),
       routes: <String, WidgetBuilder>{
+        '/wifipage': (BuildContext context) =>
+            const WifiPage(title: "WifiPage"),
         '/lightspage': (BuildContext context) =>
             const LightsPage(title: "LightsPage"),
         '/fanspage': (BuildContext context) =>
@@ -27,76 +34,6 @@ class MyApp extends StatelessWidget {
         '/mqtttestpage': (BuildContext context) =>
             const MqttTestPage(title: "MqttPage")
       },
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  final bool _isDeveloperMode = const bool.hasEnvironment("DEV")
-      ? const bool.fromEnvironment("DEV")
-      : false;
-
-  var connection = ConnectionManager();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: _isDeveloperMode ? const Text("App_dev") : const Text("App"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            ElevatedButton(
-                child: const Text(
-                  "Print conn type",
-                  style: TextStyle(fontSize: 72),
-                ),
-                onPressed: () =>
-                    // ignore: avoid_print
-                    print(connection.getConnectionType())),
-            ElevatedButton(
-                child: const Text(
-                  "Lights",
-                  style: TextStyle(fontSize: 72),
-                ),
-                onPressed: () =>
-                    Navigator.of(context).pushNamed('/lightspage')),
-            ElevatedButton(
-                child: const Text(
-                  "Fans",
-                  style: TextStyle(fontSize: 72),
-                ),
-                onPressed: () => Navigator.of(context).pushNamed('/fanspage')),
-            const ElevatedButton(
-              child: Text(
-                "Photos",
-                style: TextStyle(fontSize: 72),
-              ),
-              onPressed: null,
-            ),
-            if (_isDeveloperMode) ...[
-              ElevatedButton(
-                  onPressed: () =>
-                      Navigator.of(context).pushNamed('/mqtttestpage'),
-                  child: const Text(
-                    "MQTT Test",
-                    style: TextStyle(fontSize: 72),
-                  ))
-            ]
-          ],
-        ),
-      ),
     );
   }
 }

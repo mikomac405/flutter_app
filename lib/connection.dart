@@ -1,10 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 enum ConnectionType { none, restApi, bluetooth }
 
-class ConnectionManager {
+class ConnectionManager with ChangeNotifier {
   static final ConnectionManager _instance = ConnectionManager._internal();
   ConnectionType _connectionType = ConnectionType.none;
+
+  ConnectionType get connectionType => _connectionType;
+  set connectionType(ConnectionType newType) {
+    _connectionType = newType;
+    notifyListeners();
+  }
 
   factory ConnectionManager() {
     return _instance;
@@ -13,11 +20,11 @@ class ConnectionManager {
   // Constructor
   ConnectionManager._internal() {
     checkConnectionWithEsp().then((value) => {
-          _connectionType =
+          connectionType =
               value ? ConnectionType.restApi : ConnectionType.bluetooth
         });
     // ignore: avoid_print
-    print(_connectionType);
+    print(connectionType);
   }
 
   Future<bool> checkConnectionWithEsp() async {
@@ -34,19 +41,6 @@ class ConnectionManager {
       // ignore: avoid_print
       print("error");
       return false;
-    }
-  }
-
-  String getConnectionType() {
-    switch (_connectionType) {
-      case ConnectionType.bluetooth:
-        return "Bluetooth";
-      case ConnectionType.restApi:
-        return "RestApi";
-      case ConnectionType.none:
-        return "None";
-      default:
-        return "Error";
     }
   }
 }
