@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inzynierka/connection.dart';
 import 'loadingPage.dart';
+import 'wifiPage.dart';
 import '../globals.dart' as globals;
 
 class HomePage extends StatefulWidget {
@@ -14,6 +15,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isLoading = true;
+  bool isBluetooth = false;
   String connectionType = "None";
 
   final bool _isDeveloperMode = const bool.hasEnvironment("DEV")
@@ -33,10 +35,12 @@ class _HomePageState extends State<HomePage> {
         break;
       case ConnectionType.restApi:
         setState(() => isLoading = false);
+        setState(() => isBluetooth = false);
         setState(() => connectionType = "RestAPI");
         break;
       case ConnectionType.bluetooth:
         setState(() => isLoading = false);
+        setState(() => isBluetooth = true);
         setState(() => connectionType = "Bluetooth");
         break;
       default:
@@ -47,55 +51,51 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) => isLoading
       ? const LoadingPage()
-      : Scaffold(
-          appBar: AppBar(
-            title: _isDeveloperMode ? const Text("App_dev") : const Text("App"),
-          ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                ElevatedButton(
-                    child: const Text(
-                      "Print conn type",
-                      style: TextStyle(fontSize: 72),
-                    ),
-                    onPressed: () =>
-                        // ignore: avoid_print
-                        print(globals.connection.connectionType)),
-                ElevatedButton(
-                    child: const Text(
-                      "Lights",
-                      style: TextStyle(fontSize: 72),
-                    ),
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed('/lightspage')),
-                ElevatedButton(
-                    child: const Text(
-                      "Fans",
-                      style: TextStyle(fontSize: 72),
-                    ),
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed('/fanspage')),
-                const ElevatedButton(
-                  child: Text(
-                    "Photos",
-                    style: TextStyle(fontSize: 72),
-                  ),
-                  onPressed: null,
-                ),
-                if (_isDeveloperMode) ...[
-                  ElevatedButton(
-                      onPressed: () =>
-                          Navigator.of(context).pushNamed('/mqtttestpage'),
-                      child: const Text(
-                        "MQTT Test",
+      : isBluetooth
+          ? const WifiAuthForm()
+          : Scaffold(
+              appBar: AppBar(
+                title: _isDeveloperMode
+                    ? const Text("App_dev")
+                    : const Text("App"),
+              ),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    ElevatedButton(
+                        child: const Text(
+                          "Lights",
+                          style: TextStyle(fontSize: 72),
+                        ),
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed('/lightspage')),
+                    ElevatedButton(
+                        child: const Text(
+                          "Fans",
+                          style: TextStyle(fontSize: 72),
+                        ),
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed('/fanspage')),
+                    const ElevatedButton(
+                      child: Text(
+                        "Photos",
                         style: TextStyle(fontSize: 72),
-                      ))
-                ],
-                Text(connectionType)
-              ],
-            ),
-          ),
-        );
+                      ),
+                      onPressed: null,
+                    ),
+                    if (_isDeveloperMode) ...[
+                      ElevatedButton(
+                          onPressed: () =>
+                              Navigator.of(context).pushNamed('/mqtttestpage'),
+                          child: const Text(
+                            "MQTT Test",
+                            style: TextStyle(fontSize: 72),
+                          ))
+                    ],
+                    Text(connectionType)
+                  ],
+                ),
+              ),
+            );
 }

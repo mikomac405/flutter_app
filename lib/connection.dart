@@ -19,12 +19,16 @@ class ConnectionManager with ChangeNotifier {
 
   // Constructor
   ConnectionManager._internal() {
+    checkConnectionType();
+    // ignore: avoid_print
+    print(connectionType);
+  }
+
+  void checkConnectionType() {
     checkConnectionWithEsp().then((value) => {
           connectionType =
               value ? ConnectionType.restApi : ConnectionType.bluetooth
         });
-    // ignore: avoid_print
-    print(connectionType);
   }
 
   Future<bool> checkConnectionWithEsp() async {

@@ -1,15 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:inzynierka/pages/loadingPage.dart';
 import 'package:inzynierka/pages/mqttTestPage.dart';
 import 'connection.dart';
 import 'pages/fansPage.dart';
 import 'pages/lightsPage.dart';
 import 'pages/homePage.dart';
-import 'pages/wifiPage.dart';
 import 'globals.dart' as globals;
 
 void main() {
   globals.connection = ConnectionManager();
+  Timer.periodic(const Duration(minutes: 1), (timer) {
+    globals.connection.checkConnectionType();
+  });
+
   runApp(const MyApp());
 }
 
@@ -25,8 +29,6 @@ class MyApp extends StatelessWidget {
       ),
       home: const HomePage(title: 'Flutter Home Page'),
       routes: <String, WidgetBuilder>{
-        '/wifipage': (BuildContext context) =>
-            const WifiPage(title: "WifiPage"),
         '/lightspage': (BuildContext context) =>
             const LightsPage(title: "LightsPage"),
         '/fanspage': (BuildContext context) =>
