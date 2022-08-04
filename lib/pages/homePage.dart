@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) => isLoading
       ? const LoadingPage()
       : isBluetooth
-          ? const WifiAuthForm()
+          ? const WifiAuthForm() // Bluetooth devices selection -> WifiAuthForm()
           : Scaffold(
               appBar: AppBar(
                 title: _isDeveloperMode
