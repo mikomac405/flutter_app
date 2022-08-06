@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inzynierka/connection.dart';
-import 'loadingPage.dart';
-import 'wifiPage.dart';
+import 'loading_page.dart';
+import 'wifi_page.dart';
 import '../globals.dart' as globals;
 
 class HomePage extends StatefulWidget {

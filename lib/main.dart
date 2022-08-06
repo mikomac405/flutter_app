@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:inzynierka/pages/mqttTestPage.dart';
+import 'package:inzynierka/pages/mqtt_test_page.dart';
 import 'connection.dart';
-import 'pages/fansPage.dart';
-import 'pages/lightsPage.dart';
-import 'pages/homePage.dart';
+import 'pages/fans_page.dart';
+import 'pages/lights_page.dart';
+import 'pages/home_page.dart';
 import 'globals.dart' as globals;
 
 void main() {
