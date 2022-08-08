@@ -27,7 +27,31 @@ class WifiAuthFormState extends State<WifiAuthForm> {
 
   Future refresh() async {
     if (Platform.isAndroid) {
+      setState(() {
+        devicesNames.clear();
+        devicesSsids.clear();
+      });
       // Zinicjalizuj androidClient
+      androidClient = FlutterBluePlus.instance;
+      // Start scanning
+      androidClient.startScan(timeout: Duration(seconds: 4));
+
+// Listen to scan results
+      var subscription = androidClient.scanResults.listen((results) {
+        // do something with scan results
+
+        for (ScanResult r in results) {
+          setState(() {
+            if (r.device.name.isNotEmpty &&
+                !devicesNames.contains(r.device.name)) {
+              devicesNames.add(r.device.name);
+              devicesSsids.add(r.rssi.toString());
+            }
+          });
+        }
+      });
+// Stop scanning
+      androidClient.stopScan();
     } else if (Platform.isLinux) {
       linuxClient = BlueZClient();
       await linuxClient.connect();
