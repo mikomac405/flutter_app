@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-Column btWidget(context, names, ssids, refresh) => Column(
+Column btWidget(context, isConnecting, refresh) => Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
-        Expanded(
-            child: ListView.builder(
-                itemCount: names.length,
-                itemBuilder: (context, index) {
-                  final name = names[index];
-                  final ssid = ssids[index];
-                  return Card(
-                      child: ListTile(
-                    title: Text(name),
-                    subtitle: Text(ssid),
-                    leading: const Icon(Icons.bluetooth),
-                  ));
-                })),
+        Center(
+            child: LoadingAnimationWidget.staggeredDotsWave(
+          color: Colors.orange,
+          size: 200,
+        )),
         ElevatedButton(
-            onPressed: refresh, child: const Text("Scan for devices")),
+          onPressed: isConnecting ? null : refresh,
+          child: const Text("Scan for devices"),
+        ),
         const Padding(padding: EdgeInsets.only(bottom: 20.0))
       ],
     );

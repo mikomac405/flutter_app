@@ -32,7 +32,7 @@ class ConnectionManager with ChangeNotifier {
   }
 
   Future<bool> checkConnectionWithEsp() async {
-    var url = Uri.parse('http://srv08.mikr.us:20364/heartbeat/dev/');
+    var url = Uri.parse('http://srv08.mikr.us:20364/heartbeat/');
     try {
       var response = await http.get(url);
       // ignore: avoid_print

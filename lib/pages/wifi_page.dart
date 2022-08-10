@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:inzynierka/widgets/bt_widget.dart';
 import 'package:inzynierka/widgets/wifi_form.dart';
+import 'package:inzynierka/globals.dart';
 import 'dart:io' show Platform;
 
 // Create a Form widget.
@@ -18,56 +19,40 @@ class WifiAuthForm extends StatefulWidget {
 
 class WifiAuthFormState extends State<WifiAuthForm> {
   bool isConnected = false;
+  bool isConnecting = false;
   final _formKey = GlobalKey<FormState>();
-  List<String> devicesNames = [];
-  List<String> devicesSsids = [];
-
-  late BlueZClient linuxClient;
-  late FlutterBluePlus androidClient;
 
   Future refresh() async {
+    setState(() {
+      isConnecting = true;
+    });
+
+    // ================== ANDROID ==================
+
     if (Platform.isAndroid) {
-      setState(() {
-        devicesNames.clear();
-        devicesSsids.clear();
-      });
-      // Zinicjalizuj androidClient
       androidClient = FlutterBluePlus.instance;
-      // Start scanning
       androidClient.startScan(timeout: Duration(seconds: 4));
 
-// Listen to scan results
       var subscription = androidClient.scanResults.listen((results) {
-        // do something with scan results
-
         for (ScanResult r in results) {
-          setState(() {
-            if (r.device.name.isNotEmpty &&
-                !devicesNames.contains(r.device.name)) {
-              devicesNames.add(r.device.name);
-              devicesSsids.add(r.rssi.toString());
-            }
-          });
+          if (r.device.id.toString() == "40:91:51:B2:A2:DE") {
+            androidDevice = r.device;
+            androidDevice.connect();
+            setState(() {
+              isConnected = true;
+            });
+          }
         }
       });
-// Stop scanning
       androidClient.stopScan();
+
+      // ================== LINUX ==================
+
     } else if (Platform.isLinux) {
       linuxClient = BlueZClient();
       await linuxClient.connect();
-      if (kDebugMode) {
-        print('Start scan');
-      }
-      setState(() {
-        devicesNames.clear();
-        devicesSsids.clear();
-      });
 
       if (linuxClient.adapters.isEmpty) {
-        setState(() {
-          devicesNames.add('No Bluetooth adapters found');
-          devicesSsids.add('0');
-        });
         if (kDebugMode) {
           print('No Bluetooth adapters found');
         }
@@ -76,44 +61,52 @@ class WifiAuthFormState extends State<WifiAuthForm> {
       }
 
       var adapter = linuxClient.adapters[0];
-      if (kDebugMode) {
-        print('Searching for devices on ${adapter.name}...');
+      var foundEsp = false;
+
+      for (var device in linuxClient.devices) {
+        if (device.address == "40:91:51:B2:A2:DE") {
+          print("esp detected");
+          linuxDevice = device;
+          if (!linuxDevice.paired) await linuxDevice.pair();
+          if (!linuxDevice.connected) await linuxDevice.connect();
+          setState(() {
+            isConnected = true;
+          });
+          foundEsp = true;
+          continue;
+        }
       }
-      setState(() {
-        for (final device in linuxClient.devices) {
-          devicesNames.add(device.name.isNotEmpty ? device.name : "No name");
-          devicesSsids.add(device.address);
+
+      linuxClient.deviceAdded.listen((device) async {
+        print("found device | ${device.address}");
+        if (device.address == "40:91:51:B2:A2:DE") {
+          print("esp detected");
+          linuxDevice = device;
+          if (!linuxDevice.paired) await linuxDevice.pair();
+          if (!linuxDevice.connected) await linuxDevice.connect();
+          setState(() {
+            isConnected = true;
+          });
         }
       });
 
-      linuxClient.deviceAdded.listen((device) => {
-            setState(() {
-              devicesNames
-                  .add(device.name.isNotEmpty ? device.name : "No name");
-              devicesSsids.add(device.address);
-              if (kDebugMode) {
-                print('  ${device.address} ${device.name}');
-              }
-            })
-          });
+      if (!foundEsp) {
+        await adapter.startDiscovery();
 
-      await adapter.startDiscovery();
+        await Future.delayed(const Duration(seconds: 5));
 
-      await Future.delayed(const Duration(seconds: 5));
-
-      await adapter.stopDiscovery();
-
-      if (kDebugMode) {
-        print('Stop scan');
+        await adapter.stopDiscovery();
       }
-
-      await linuxClient.close();
+      // ================== ELSE ==================
     } else {
       setState(() {
-        devicesNames = ['a', 'b', 'c'];
-        devicesSsids = ['1', '2', '3'];
+        isConnected = true;
       });
     }
+
+    setState(() {
+      isConnecting = false;
+    });
   }
 
   @override
@@ -122,8 +115,8 @@ class WifiAuthFormState extends State<WifiAuthForm> {
         appBar: AppBar(
           title: const Text("WiFi form"),
         ),
-        body: isConnected
+        body: isConnected && !isConnecting
             ? wifiForm(context, _formKey)
-            : btWidget(context, devicesNames, devicesSsids, refresh));
+            : btWidget(context, isConnecting, refresh));
   }
 }

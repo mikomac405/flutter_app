@@ -1,6 +1,10 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:inzynierka/globals.dart';
 
 Widget wifiForm(BuildContext context, _formKey) {
+  String ssid = "";
+  String pass = "";
   return Form(
       key: _formKey,
       child: Container(
@@ -19,6 +23,7 @@ Widget wifiForm(BuildContext context, _formKey) {
                   if (val == null || val.isEmpty) {
                     return "Please enter your SSID";
                   }
+                  ssid = "0;0;" + val;
                   return null;
                 },
               ),
@@ -32,20 +37,43 @@ Widget wifiForm(BuildContext context, _formKey) {
                   if (val == null || val.isEmpty) {
                     return "Please enter your password";
                   }
+                  pass = "0;1;" + val;
                   return null;
                 },
               ),
               Container(
                 padding: const EdgeInsets.all(20),
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     // Validate returns true if the form is valid, or false otherwise.
                     if (_formKey.currentState!.validate()) {
                       // If the form is valid, display a snackbar. In the real world,
                       // you'd often call a server or save the information in a database.
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Processing Data')),
+                        const SnackBar(
+                            content: Text(
+                                'Sending data to EPS... Waiting for server response')),
                       );
+
+                      if (Platform.isLinux) {
+                        for (var service in linuxDevice.gattServices) {
+                          if (service.uuid.toString() ==
+                              "3ec15674-a3a8-4522-992b-8e77552e15d1") {
+                            for (var char in service.characteristics) {
+                              if (char.uuid.toString() ==
+                                  "3ec15675-a3a8-4522-992b-8e77552e15d1") {
+                                await char.writeValue(ssid.runes.toList());
+                                await Future.delayed(
+                                    const Duration(seconds: 2));
+                                await char.writeValue(pass.runes.toList());
+                                await Future.delayed(
+                                    const Duration(seconds: 2));
+                                await char.writeValue("0;2;".runes.toList());
+                              }
+                            }
+                          }
+                        }
+                      }
                     }
                   },
                   child: const Text('Submit'),
