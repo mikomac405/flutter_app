@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class FansPage extends StatefulWidget {
   const FansPage({Key? key, required this.title}) : super(key: key);
@@ -23,7 +24,7 @@ class _FansPageState extends State<FansPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             const ElevatedButton(
-              onPressed: null,
+              onPressed: changeFans,
               child: Text(
                 'On/Off',
                 style: TextStyle(fontSize: 72),
@@ -56,4 +57,12 @@ class _FansPageState extends State<FansPage> {
       ),
     );
   }
+}
+
+void changeFans() async {
+  var url = Uri.parse('http://srv08.mikr.us:20364');
+  var response =
+      await http.post(url, body: {'component': 'vent', 'command': 'on'});
+  // ignore: avoid_print
+  print(response.body);
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class LightsPage extends StatefulWidget {
   const LightsPage({Key? key, required this.title}) : super(key: key);
@@ -23,7 +24,7 @@ class _LightsPageState extends State<LightsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             const ElevatedButton(
-              onPressed: null,
+              onPressed: changeLights,
               child: Text(
                 'On/Off',
                 style: TextStyle(fontSize: 72),
@@ -57,4 +58,12 @@ class _LightsPageState extends State<LightsPage> {
       ),
     );
   }
+}
+
+void changeLights() async {
+  var url = Uri.parse('http://srv08.mikr.us:20364');
+  var response =
+      await http.post(url, body: {'component': 'led', 'command': 'on'});
+  // ignore: avoid_print
+  print(response.body);
 }
