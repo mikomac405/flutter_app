@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:inzynierka/globals.dart';
 
 class LightsPage extends StatefulWidget {
   const LightsPage({Key? key, required this.title}) : super(key: key);
@@ -13,6 +14,17 @@ class LightsPage extends StatefulWidget {
 class _LightsPageState extends State<LightsPage> {
   double _value = 20;
 
+  final controllerStart = TextEditingController();
+  final controllerStop = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    controllerStart.dispose();
+    controllerStop.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,10 +35,19 @@ class _LightsPageState extends State<LightsPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            const ElevatedButton(
-              onPressed: changeLights,
+            ElevatedButton(
+              onPressed: () => setConfig(
+                  "led", "on", controllerStart.text + controllerStop.text),
               child: Text(
-                'On/Off',
+                'On',
+                style: TextStyle(fontSize: 72),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () => setConfig(
+                  "led", "off", controllerStart.text + controllerStop.text),
+              child: Text(
+                'Off',
                 style: TextStyle(fontSize: 72),
               ),
             ),
@@ -34,21 +55,29 @@ class _LightsPageState extends State<LightsPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Column(
-                  children: const <Widget>[
+                  children: <Widget>[
                     Text(
                       "Start time",
                       style: TextStyle(fontSize: 36),
                     ),
-                    SizedBox(width: 100, child: TextField()),
+                    SizedBox(
+                        width: 100,
+                        child: TextField(
+                          controller: controllerStart,
+                        )),
                   ],
                 ),
                 Column(
-                  children: const <Widget>[
+                  children: <Widget>[
                     Text(
                       "Stop time",
                       style: TextStyle(fontSize: 36),
                     ),
-                    SizedBox(width: 100, child: TextField()),
+                    SizedBox(
+                        width: 100,
+                        child: TextField(
+                          controller: controllerStop,
+                        )),
                   ],
                 ),
               ],
@@ -58,12 +87,4 @@ class _LightsPageState extends State<LightsPage> {
       ),
     );
   }
-}
-
-void changeLights() async {
-  var url = Uri.parse('http://srv08.mikr.us:20364');
-  var response =
-      await http.post(url, body: {'component': 'led', 'command': 'on'});
-  // ignore: avoid_print
-  print(response.body);
 }
