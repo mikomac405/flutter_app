@@ -14,6 +14,10 @@ void main() {
     globals.connection.checkConnectionType();
   });
 
+  Timer.periodic(const Duration(seconds: 10), (timer) {
+    globals.connection.getComponentsStatus();
+  });
+
   runApp(const MyApp());
 }
 

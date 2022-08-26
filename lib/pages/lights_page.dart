@@ -36,7 +36,7 @@ class _LightsPageState extends State<LightsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             ElevatedButton(
-              onPressed: () => setConfig(
+              onPressed: () => connection.setConfig(
                   "led", "on", controllerStart.text + controllerStop.text),
               child: Text(
                 'On',
@@ -44,7 +44,7 @@ class _LightsPageState extends State<LightsPage> {
               ),
             ),
             ElevatedButton(
-              onPressed: () => setConfig(
+              onPressed: () => connection.setConfig(
                   "led", "off", controllerStart.text + controllerStop.text),
               child: Text(
                 'Off',

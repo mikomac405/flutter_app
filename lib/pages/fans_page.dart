@@ -25,14 +25,16 @@ class _FansPageState extends State<FansPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             ElevatedButton(
-              onPressed: () => setConfig('vent', 'on', _value.toString()),
+              onPressed: () =>
+                  connection.setConfig('vent', 'on', _value.toString()),
               child: Text(
                 'On',
                 style: TextStyle(fontSize: 72),
               ),
             ),
             ElevatedButton(
-              onPressed: () => setConfig('vent', 'off', _value.toString()),
+              onPressed: () =>
+                  connection.setConfig('vent', 'off', _value.toString()),
               child: Text(
                 'Off',
                 style: TextStyle(fontSize: 72),
