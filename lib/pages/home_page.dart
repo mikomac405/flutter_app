@@ -87,9 +87,9 @@ class _HomePageState extends State<HomePage> {
                     if (_isDeveloperMode) ...[
                       ElevatedButton(
                           onPressed: () =>
-                              Navigator.of(context).pushNamed('/mqtttestpage'),
+                              Navigator.of(context).pushNamed('/debugpage'),
                           child: const Text(
-                            "MQTT Test",
+                            "Debug",
                             style: TextStyle(fontSize: 72),
                           ))
                     ],

@@ -30,6 +30,7 @@ dependencies:
   location: ^4.4.0
   dotenv: ^4.0.1
   http: ^0.13.4
+  vk: ^0.2.1
   flutter:
     sdk: flutter
 
