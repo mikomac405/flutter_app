@@ -45,6 +45,7 @@ class ConnectionManager with ChangeNotifier {
     //return status.body;
   }
 
+  ///This function is responsible for sending commands to ESP
   Future<void> setConfig(component, command, args) async {
     var url =
         Uri.parse("http://srv08.mikr.us:20364/config/" + component + "/set/");
@@ -55,6 +56,7 @@ class ConnectionManager with ChangeNotifier {
     print(response.body);
   }
 
+  ///This function is responsible for checking if connection with ESP is up
   Future<bool> checkConnectionWithEsp() async {
     var url = Uri.parse('http://srv08.mikr.us:20364/heartbeat/');
     try {
