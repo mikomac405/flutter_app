@@ -28,6 +28,8 @@ class _HomePageState extends State<HomePage> {
     globals.connection.addListener(_connectionChecker);
   }
 
+  ///This function is responsible for setting states of app based on
+  ///ConnectionType
   void _connectionChecker() {
     switch (globals.connection.connectionType) {
       case ConnectionType.none:

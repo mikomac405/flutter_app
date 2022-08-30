@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 Map<String, dynamic> status = jsonDecode(
     "{\"led\":{\"state\":1,\"lightsOn\":\"10:0\",\"lightsOff\":\"22:0\"},\"board\":\"\",\"waterLvl\":{\"state\":0}}");
 
+///This function is responsible for printing farm components status
 void testFarm(status) {
   var farm = Farm();
 }
