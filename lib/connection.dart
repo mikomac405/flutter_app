@@ -35,14 +35,9 @@ class ConnectionManager with ChangeNotifier {
         });
   }
 
-  Future<void> getComponentsStatus() async {
-    Map json_map = {'command': 'get_status', 'args': ''};
-    var status = await http.post(
-        Uri.parse("http://srv08.mikr.us:20364/config/manager/set/"),
-        headers: {"Content-Type": "application/json"},
-        body: json.encode(json_map));
-    print(status.body);
-    //return status.body;
+  Future<String> getComponentsStatus() async {
+    var status = await http.get(Uri.parse("http://srv08.mikr.us:20364/status"));
+    return status.body;
   }
 
   ///This function is responsible for sending commands to ESP

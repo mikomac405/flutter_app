@@ -329,6 +329,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
+  vk:
+    dependency: "direct main"
+    description:
+      name: vk
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.1"
   xml:
     dependency: transitive
     description:

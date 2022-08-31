@@ -1,21 +1,24 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:inzynierka/pages/debug_page.dart';
 import 'package:inzynierka/pages/mqtt_test_page.dart';
 import 'connection.dart';
 import 'pages/fans_page.dart';
 import 'pages/lights_page.dart';
 import 'pages/home_page.dart';
-import 'globals.dart' as globals;
+import 'globals.dart';
 
 void main() {
-  globals.connection = ConnectionManager();
+  connection = ConnectionManager();
   Timer.periodic(const Duration(minutes: 1), (timer) {
-    globals.connection.checkConnectionType();
+    connection.checkConnectionType();
   });
 
   Timer.periodic(const Duration(seconds: 10), (timer) {
-    globals.connection.getComponentsStatus();
+    var status = connection.getComponentsStatus();
+    farm.update(jsonDecode(status));
   });
 
   runApp(const MyApp());
@@ -38,7 +41,9 @@ class MyApp extends StatelessWidget {
         '/fanspage': (BuildContext context) =>
             const FansPage(title: "FansPage"),
         '/mqtttestpage': (BuildContext context) =>
-            const MqttTestPage(title: "MqttPage")
+            const MqttTestPage(title: "MqttPage"),
+        '/debugpage': (BuildContext context) =>
+            const DebugPage(title: "DebugPage")
       },
     );
   }

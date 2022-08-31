@@ -90,7 +90,7 @@ class WifiAuthFormState extends State<WifiAuthForm> {
 
       linuxClient.deviceAdded.listen((device) async {
         print("found device | ${device.address}");
-        if (device.address == "40:91:51:B2:A2:DE") {
+        if (device.address == "E0:E2:E6:D1:03:E6") {
           print("esp detected");
           linuxDevice = device;
           if (!linuxDevice.paired) await linuxDevice.pair();

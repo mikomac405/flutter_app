@@ -56,7 +56,7 @@ class _LightsPageState extends State<LightsPage> {
               children: <Widget>[
                 Column(
                   children: <Widget>[
-                    Text(
+                    const Text(
                       "Start time",
                       style: TextStyle(fontSize: 36),
                     ),
@@ -65,11 +65,15 @@ class _LightsPageState extends State<LightsPage> {
                         child: TextField(
                           controller: controllerStart,
                         )),
+                    ElevatedButton(
+                        onPressed: () => connection.setConfig(
+                            "led", "set_time_on", controllerStart.text),
+                        child: const Text("Set time on"))
                   ],
                 ),
                 Column(
                   children: <Widget>[
-                    Text(
+                    const Text(
                       "Stop time",
                       style: TextStyle(fontSize: 36),
                     ),
@@ -78,6 +82,10 @@ class _LightsPageState extends State<LightsPage> {
                         child: TextField(
                           controller: controllerStop,
                         )),
+                    ElevatedButton(
+                        onPressed: () => connection.setConfig(
+                            "led", "set_time_off", controllerStop.text),
+                        child: const Text("Set time off"))
                   ],
                 ),
               ],
