@@ -64,9 +64,9 @@ class ConnectionManager with ChangeNotifier {
       // ignore: avoid_print
       print(response.body);
       if (response.body == "Got heartbeat") {
-        return true;
+        return false;
       }
-      return false;
+      return true;
     } catch (error) {
       // ignore: avoid_print
       print("error");

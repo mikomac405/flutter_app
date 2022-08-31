@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:inzynierka/globals.dart';
+import 'package:number_inc_dec/number_inc_dec.dart';
 
 class FansPage extends StatefulWidget {
   const FansPage({Key? key, required this.title}) : super(key: key);
@@ -61,7 +62,25 @@ class _FansPageState extends State<FansPage> {
                   style: const TextStyle(fontSize: 48),
                 ),
               ],
-            )
+            ),
+            NumberInputWithIncrementDecrement(
+              controller: TextEditingController(),
+              min: 0,
+              max: 100,
+            ),
+            Text(
+              "Wilgotność",
+              style: const TextStyle(fontSize: 48),
+            ),
+            NumberInputWithIncrementDecrement(
+              controller: TextEditingController(),
+              min: 0,
+              max: 100,
+            ),
+            Text(
+              "Temperatura",
+              style: const TextStyle(fontSize: 48),
+            ),
           ],
         ),
       ),
