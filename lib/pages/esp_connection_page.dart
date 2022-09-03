@@ -81,7 +81,34 @@ class EspConnectionPageState extends State<EspConnectionPage> {
   }
 
   Future connectToDevice(BluetoothDevice device) async {
-    print(device.name);
+    if (device.name != "ESP32BLE") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("You can connect only to farm!")),
+      );
+      return;
+    }
+    androidDevice = device;
+
+    setState(() {
+      isConnecting = true;
+    });
+
+    androidDevice.connect(timeout: const Duration(seconds: 4)).whenComplete(() {
+      var connectedDevices = androidClient.connectedDevices;
+      connectedDevices.then((value) {
+        if (value.contains(androidDevice)) {
+          androidDevice.discoverServices();
+          setState(() {
+            isConnected = true;
+          });
+        } else {
+          androidDevice.disconnect();
+        }
+      });
+      setState(() {
+        isConnecting = false;
+      });
+    });
   }
 
   @override
@@ -92,7 +119,7 @@ class EspConnectionPageState extends State<EspConnectionPage> {
         ),
         body: Platform.isAndroid
             ? (isConnected && !isConnecting)
-                ? const WifiForm()
+                ? WifiForm()
                 : Column(children: [
                     Expanded(
                         child: ListView.builder(
@@ -113,10 +140,13 @@ class EspConnectionPageState extends State<EspConnectionPage> {
                                 },
                               ));
                             })),
-                    ElevatedButton(
-                      onPressed: isScanning || isConnecting ? null : refresh,
-                      child: const Text("Scan for devices"),
-                    )
+                    Container(
+                        padding: const EdgeInsets.only(top: 20, bottom: 50),
+                        child: ElevatedButton(
+                          onPressed:
+                              isScanning || isConnecting ? null : refresh,
+                          child: const Text("Scan for devices"),
+                        ))
                   ])
             : const Center(
                 child: Text(

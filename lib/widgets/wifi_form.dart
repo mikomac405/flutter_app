@@ -1,7 +1,8 @@
-// ignore_for_file: unnecessary_new
-
+import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:base_codecs/base_codecs.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:inzynierka/globals.dart';
 import 'package:vk/vk.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -32,9 +33,9 @@ class _WifiFormState extends State<WifiForm> {
   }
 
   void getWifiName() async {
-    var wifiName = await NetworkInfo().getWifiName();
+    var wifiName = await NetworkInfo().getWifiName() as String;
     setState(() {
-      ssid = wifiName as String;
+      ssid = wifiName.replaceAll("\"", "");
     });
   }
 
@@ -63,7 +64,7 @@ class _WifiFormState extends State<WifiForm> {
             children: <Widget>[
               Platform.isAndroid
                   ? TextFormField(
-                      controller: _controllerText,
+                      controller: TextEditingController(text: ssid),
                       decoration: const InputDecoration(
                         icon: Icon(Icons.wifi),
                         hintText: 'Enter your SSID',
@@ -73,7 +74,7 @@ class _WifiFormState extends State<WifiForm> {
                         if (val == null || val.isEmpty) {
                           return "Please enter your SSID";
                         }
-                        ssid = "0;0;" + val;
+                        ssid = val;
                         return null;
                       },
                     )
@@ -104,7 +105,7 @@ class _WifiFormState extends State<WifiForm> {
                   if (val == null || val.isEmpty) {
                     return "Please enter your password";
                   }
-                  pass = "0;1;" + val;
+                  pass = val;
                   return null;
                 },
               ),
@@ -125,10 +126,26 @@ class _WifiFormState extends State<WifiForm> {
                       if (Platform.isLinux) {
                         connection.connectToWifi(ssid, pass);
                       } else if (Platform.isAndroid) {
-                        var services = androidDevice.discoverServices();
-                        services.then((value) => {
-                              for (var el in value) {print(el)}
-                            });
+                        List<BluetoothService> services =
+                            await androidDevice.discoverServices();
+                        services.forEach((service) async {
+                          if (service.uuid.toString() ==
+                              "3ec15674-a3a8-4522-992b-8e77552e15d1") {
+                            var characteristics = service.characteristics;
+                            for (BluetoothCharacteristic c in characteristics) {
+                              if (c.uuid.toString() ==
+                                  "3ec15675-a3a8-4522-992b-8e77552e15d1") {
+                                await c.write("0;0;$ssid".runes.toList());
+                                await Future.delayed(
+                                    const Duration(seconds: 2));
+                                await c.write("0;1;$pass".runes.toList());
+                                await Future.delayed(
+                                    const Duration(seconds: 2));
+                                await c.write("0;2;".runes.toList());
+                              }
+                            }
+                          }
+                        });
                       }
                       // TODO: Add logic for Android
                     }

@@ -10,3 +10,5 @@ Farm farm = Farm();
 late ConnectionManager connection;
 late FlutterBluePlus androidClient;
 late BluetoothDevice androidDevice;
+
+bool disconnectRequest = false;

@@ -56,43 +56,45 @@ class _HomePageState extends State<HomePage> {
         return const EspConnectionPage();
       default:
         if (connectionStatus == ConnectionStatus.restApi) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                ElevatedButton(
-                    child: const Text(
-                      "Lights",
-                      style: TextStyle(fontSize: 72),
-                    ),
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed('/lightspage')),
-                ElevatedButton(
-                    child: const Text(
-                      "Fans",
-                      style: TextStyle(fontSize: 72),
-                    ),
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed('/fanspage')),
-                const ElevatedButton(
-                  child: Text(
-                    "Photos",
-                    style: TextStyle(fontSize: 72),
-                  ),
-                  onPressed: null,
-                ),
-                if (_isDeveloperMode) ...[
-                  ElevatedButton(
-                      onPressed: () =>
-                          Navigator.of(context).pushNamed('/debugpage'),
-                      child: const Text(
-                        "Debug",
+          return Scaffold(
+              appBar: AppBar(title: Text("Main")),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    ElevatedButton(
+                        child: const Text(
+                          "Lights",
+                          style: TextStyle(fontSize: 72),
+                        ),
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed('/lightspage')),
+                    ElevatedButton(
+                        child: const Text(
+                          "Fans",
+                          style: TextStyle(fontSize: 72),
+                        ),
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed('/fanspage')),
+                    const ElevatedButton(
+                      child: Text(
+                        "Photos",
                         style: TextStyle(fontSize: 72),
-                      ))
-                ],
-              ],
-            ),
-          );
+                      ),
+                      onPressed: null,
+                    ),
+                    if (_isDeveloperMode) ...[
+                      ElevatedButton(
+                          onPressed: () =>
+                              Navigator.of(context).pushNamed('/debugpage'),
+                          child: const Text(
+                            "Debug",
+                            style: TextStyle(fontSize: 72),
+                          ))
+                    ],
+                  ],
+                ),
+              ));
         } else {
           return Column(children: const [Text("Something gone wrong!")]);
         }
