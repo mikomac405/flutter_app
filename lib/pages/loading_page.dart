@@ -12,7 +12,7 @@ class LoadingPage extends StatelessWidget {
       ),
       body: Center(
         child: LoadingAnimationWidget.staggeredDotsWave(
-          color: Colors.orange,
+          color: Colors.blue,
           size: 200,
         ),
       ),

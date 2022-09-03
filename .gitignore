@@ -53,3 +53,6 @@ app.*.map.json
 
 /web/
 .vscode/
+windows/
+deploy_debug.ps1
+deploy_debug.ps1

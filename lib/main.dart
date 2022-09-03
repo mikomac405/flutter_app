@@ -12,14 +12,14 @@ import 'globals.dart';
 
 void main() {
   connection = ConnectionManager();
-  Timer.periodic(const Duration(minutes: 1), (timer) {
-    connection.checkConnectionType();
+  Timer.periodic(const Duration(seconds: 20), (timer) {
+    connection.checkConnectionStatus();
   });
 
-  Timer.periodic(const Duration(seconds: 10), (timer) {
-    var status = connection.getComponentsStatus();
-    farm.update(jsonDecode(status));
-  });
+  // Timer.periodic(const Duration(seconds: 10), (timer) {
+  //   var status = connection.getComponentsStatus();
+  //   farm.update(jsonDecode(status));
+  // });
 
   runApp(const MyApp());
 }

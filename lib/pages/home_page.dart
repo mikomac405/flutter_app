@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:inzynierka/connection.dart';
+import 'package:inzynierka/pages/wifi_connection_page.dart';
 import 'loading_page.dart';
-import 'wifi_page.dart';
-import '../globals.dart' as globals;
+import 'esp_connection_page.dart';
+import '../globals.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, required this.title}) : super(key: key);
@@ -14,9 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isLoading = true;
-  bool isBluetooth = false;
-  String connectionType = "None";
+  ConnectionStatus connectionStatus = ConnectionStatus.none;
 
   final bool _isDeveloperMode = const bool.hasEnvironment("DEV")
       ? const bool.fromEnvironment("DEV")
@@ -25,42 +26,38 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    globals.connection.addListener(_connectionChecker);
+    connection.addListener(_connectionChecker);
   }
 
   ///This function is responsible for setting states of app based on
   ///ConnectionType
   void _connectionChecker() {
-    switch (globals.connection.connectionType) {
-      case ConnectionType.none:
-        setState(() => isLoading = true);
-        break;
-      case ConnectionType.restApi:
-        setState(() => isLoading = false);
-        setState(() => isBluetooth = false);
-        setState(() => connectionType = "RestAPI");
-        break;
-      case ConnectionType.bluetooth:
-        setState(() => isLoading = false);
-        setState(() => isBluetooth = true);
-        setState(() => connectionType = "Bluetooth");
-        break;
-      default:
-        setState(() => isLoading = true);
-    }
+    setState(() {
+      connectionStatus = connection.connectionStatus;
+      print(connectionStatus);
+    });
   }
 
   @override
-  Widget build(BuildContext context) => isLoading
-      ? const LoadingPage()
-      : isBluetooth
-          ? const WifiAuthForm() // Bluetooth devices selection -> WifiAuthForm()
-          : Scaffold(
-              appBar: AppBar(
-                title: _isDeveloperMode
-                    ? const Text("App_dev")
-                    : const Text("App"),
-              ),
+  Widget build(BuildContext context) {
+    switch (connectionStatus) {
+      case ConnectionStatus.none:
+        return const LoadingPage();
+      case ConnectionStatus.internet:
+        return const LoadingPage();
+      case ConnectionStatus.noInternet:
+        return const WifiConnectionPage();
+      case ConnectionStatus.noRestApi:
+        //  return const WifiConnectionPage();
+        return Scaffold(
+            appBar: AppBar(title: const Text("No api")),
+            body: Column(children: [const Text("Turn on API")]));
+      case ConnectionStatus.noEsp:
+        return const EspConnectionPage();
+      default:
+        if (connectionStatus == ConnectionStatus.restApi) {
+          return Scaffold(
+              appBar: AppBar(title: Text("Main")),
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -95,9 +92,29 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(fontSize: 72),
                           ))
                     ],
-                    Text(connectionType)
                   ],
                 ),
-              ),
-            );
+              ));
+        } else {
+          return Column(children: const [Text("Something gone wrong!")]);
+        }
+    }
+  }
 }
+  
+  /*
+  isLoading
+      ? const LoadingPage()
+      : isBluetooth
+          ? const WifiAuthForm() // Bluetooth devices selection -> WifiAuthForm()
+          : Scaffold(
+              appBar: AppBar(
+                title: _isDeveloperMode
+                    ? const Text("App_dev")
+                    : const Text("App"),
+              ),
+              body: 
+              
+              
+}
+*/
