@@ -1,98 +1,154 @@
+// ignore_for_file: unnecessary_new
+
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:inzynierka/globals.dart';
 import 'package:vk/vk.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 
-TextEditingController _controllerText = TextEditingController();
+class WifiForm extends StatefulWidget {
+  const WifiForm({Key? key}) : super(key: key);
 
-Widget wifiForm(BuildContext context, _formKey) {
+  @override
+  State<WifiForm> createState() => _WifiFormState();
+}
+
+class _WifiFormState extends State<WifiForm> {
   String ssid = "";
   String pass = "";
-  return Form(
-    key: _formKey,
-    child: Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            TextFormField(
-              controller: _controllerText,
-              decoration: const InputDecoration(
-                icon: Icon(Icons.wifi),
-                hintText: 'Enter your SSID',
-                labelText: 'SSID',
-              ),
-              validator: (val) {
-                if (val == null || val.isEmpty) {
-                  return "Please enter your SSID";
-                }
-                ssid = "0;0;" + val;
-                return null;
-              },
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                icon: Icon(Icons.tag),
-                hintText: 'Enter a password',
-                labelText: 'Password',
-              ),
-              validator: (val) {
-                if (val == null || val.isEmpty) {
-                  return "Please enter your password";
-                }
-                pass = "0;1;" + val;
-                return null;
-              },
-            ),
-            Container(
-              padding: const EdgeInsets.all(20),
-              child: ElevatedButton(
-                onPressed: () async {
-                  // Validate returns true if the form is valid, or false otherwise.
-                  if (_formKey.currentState!.validate()) {
-                    // If the form is valid, display a snackbar. In the real world,
-                    // you'd often call a server or save the information in a database.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text(
-                              'Sending data to EPS... Waiting for server response')),
-                    );
+  List<String> ssids = ["Empty"];
+  late TextEditingController _controllerText;
 
-                    if (Platform.isLinux) {
-                      for (var service in linuxDevice.gattServices) {
-                        if (service.uuid.toString() ==
-                            "3ec15674-a3a8-4522-992b-8e77552e15d1") {
-                          for (var char in service.characteristics) {
-                            if (char.uuid.toString() ==
-                                "3ec15675-a3a8-4522-992b-8e77552e15d1") {
-                              await char.writeValue(ssid.runes.toList());
-                              await Future.delayed(const Duration(seconds: 2));
-                              await char.writeValue(pass.runes.toList());
-                              await Future.delayed(const Duration(seconds: 2));
-                              await char.writeValue("0;2;".runes.toList());
-                            }
-                          }
+  void getWifisList() async {
+    List<String> tempList = await connection.getWifiList();
+    setState(() {
+      if (tempList.isNotEmpty) {
+        ssids = tempList;
+      } else {
+        ssids = ["Smth", "gone", "wrong"];
+      }
+      print(ssids);
+    });
+  }
+
+  void getWifiName() async {
+    var wifiName = await NetworkInfo().getWifiName();
+    setState(() {
+      ssid = wifiName as String;
+    });
+  }
+
+  final _fk = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    _controllerText = TextEditingController();
+    super.initState();
+    if (Platform.isAndroid) {
+      getWifiName();
+    } else if (Platform.isLinux) {
+      getWifisList();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _fk,
+      child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Platform.isAndroid
+                  ? TextFormField(
+                      controller: _controllerText,
+                      decoration: const InputDecoration(
+                        icon: Icon(Icons.wifi),
+                        hintText: 'Enter your SSID',
+                        labelText: 'SSID',
+                      ),
+                      validator: (val) {
+                        if (val == null || val.isEmpty) {
+                          return "Please enter your SSID";
                         }
-                      }
-                    }
-                  }
+                        ssid = "0;0;" + val;
+                        return null;
+                      },
+                    )
+                  : DropdownButton(
+                      value: ssids.first,
+                      items:
+                          ssids.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (String? value) {
+                        ssid = value!;
+                      }),
+              TextFormField(
+                controller: _controllerText,
+                decoration: const InputDecoration(
+                  icon: Icon(Icons.tag),
+                  hintText: 'Enter a password',
+                  labelText: 'Password',
+                ),
+                onChanged: (val) {
+                  _controllerText.selection = new TextSelection.fromPosition(
+                      new TextPosition(offset: val.length));
                 },
-                child: const Text('Submit'),
+                validator: (val) {
+                  if (val == null || val.isEmpty) {
+                    return "Please enter your password";
+                  }
+                  pass = "0;1;" + val;
+                  return null;
+                },
               ),
-            ),
-            Expanded(
-              child: Container(),
-            ),
-            Container(
-              color: Colors.grey.shade900,
-              child: VirtualKeyboard(
-                height: 170,
-                type: VirtualKeyboardType.Alphanumeric,
-                textController: _controllerText,
+              Container(
+                padding: const EdgeInsets.all(20),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    // Validate returns true if the form is valid, or false otherwise.
+                    if (_fk.currentState!.validate()) {
+                      // If the form is valid, display a snackbar. In the real world,
+                      // you'd often call a server or save the information in a database.
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                'Sending data to EPS... Waiting for server response')),
+                      );
+
+                      if (Platform.isLinux) {
+                        connection.connectToWifi(ssid, pass);
+                      } else if (Platform.isAndroid) {
+                        var services = androidDevice.discoverServices();
+                        services.then((value) => {
+                              for (var el in value) {print(el)}
+                            });
+                      }
+                      // TODO: Add logic for Android
+                    }
+                  },
+                  child: const Text('Submit'),
+                ),
               ),
-            )
-          ],
-        )),
-  );
+              Expanded(
+                child: Platform.isLinux
+                    ? Container(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        child: VirtualKeyboard(
+                          type: VirtualKeyboardType.Alphanumeric,
+                          textController: _controllerText,
+                        ),
+                      )
+                    : Container(),
+              )
+            ],
+          )),
+    );
+  }
 }
