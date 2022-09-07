@@ -124,7 +124,8 @@ class _WifiFormState extends State<WifiForm> {
                       );
 
                       if (Platform.isLinux) {
-                        connection.connectToWifi(ssid, pass);
+                        // TODO: Add selected item to list!
+                        connection.connectToWifi(ssids.first, pass);
                       } else if (Platform.isAndroid) {
                         List<BluetoothService> services =
                             await androidDevice.discoverServices();

@@ -63,9 +63,17 @@ class ConnectionManager with ChangeNotifier {
     return list.sublist(1, list.length - 2);
   }
 
-  void connectToWifi(String ssid, String password) async {
-    await Process.run(
-        'nmcli', ['d', 'wifi', 'connect', ssid, 'password', password]);
+  Future<void> connectToWifi(String ssid, String password) async {
+    var connect = Process.run('nmcli',
+        ['d', 'wifi', 'connect', ssid.trim(), 'password', password.trim()]);
+    connect.then((val) {
+      print(ssid);
+      print(password);
+      print(val.pid);
+      print(val.stdout);
+      print(val.stderr);
+      print(val.exitCode);
+    });
     checkConnectionStatus();
   }
 
