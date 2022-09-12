@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
-import 'package:base_codecs/base_codecs.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:inzynierka/globals.dart';
@@ -28,7 +28,9 @@ class _WifiFormState extends State<WifiForm> {
       } else {
         ssids = ["Smth", "gone", "wrong"];
       }
-      print(ssids);
+      if (kDebugMode) {
+        print(ssids);
+      }
     });
   }
 
@@ -98,8 +100,8 @@ class _WifiFormState extends State<WifiForm> {
                   labelText: 'Password',
                 ),
                 onChanged: (val) {
-                  _controllerText.selection = new TextSelection.fromPosition(
-                      new TextPosition(offset: val.length));
+                  _controllerText.selection = TextSelection.fromPosition(
+                      TextPosition(offset: val.length));
                 },
                 validator: (val) {
                   if (val == null || val.isEmpty) {
@@ -129,7 +131,9 @@ class _WifiFormState extends State<WifiForm> {
                       } else if (Platform.isAndroid) {
                         List<BluetoothService> services =
                             await androidDevice.discoverServices();
-                        services.forEach((service) async {
+                        //TODO: Check if for loop can be used insted of forEach
+                        //services.forEach((service) async {
+                        for (var service in services) {
                           if (service.uuid.toString() ==
                               "3ec15674-a3a8-4522-992b-8e77552e15d1") {
                             var characteristics = service.characteristics;
@@ -146,9 +150,8 @@ class _WifiFormState extends State<WifiForm> {
                               }
                             }
                           }
-                        });
+                        }
                       }
-                      // TODO: Add logic for Android
                     }
                   },
                   child: const Text('Submit'),

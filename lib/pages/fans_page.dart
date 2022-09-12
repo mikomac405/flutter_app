@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:inzynierka/globals.dart';
 import 'package:number_inc_dec/number_inc_dec.dart';
 
@@ -28,7 +27,7 @@ class _FansPageState extends State<FansPage> {
             ElevatedButton(
               onPressed: () =>
                   connection.setConfig('vent', 'on', _value.toString()),
-              child: Text(
+              child: const Text(
                 'On',
                 style: TextStyle(fontSize: 72),
               ),
@@ -36,7 +35,7 @@ class _FansPageState extends State<FansPage> {
             ElevatedButton(
               onPressed: () =>
                   connection.setConfig('vent', 'off', _value.toString()),
-              child: Text(
+              child: const Text(
                 'Off',
                 style: TextStyle(fontSize: 72),
               ),
@@ -68,18 +67,18 @@ class _FansPageState extends State<FansPage> {
               min: 0,
               max: 100,
             ),
-            Text(
+            const Text(
               "Wilgotność",
-              style: const TextStyle(fontSize: 48),
+              style: TextStyle(fontSize: 48),
             ),
             NumberInputWithIncrementDecrement(
               controller: TextEditingController(),
               min: 0,
               max: 100,
             ),
-            Text(
+            const Text(
               "Temperatura",
-              style: const TextStyle(fontSize: 48),
+              style: TextStyle(fontSize: 48),
             ),
           ],
         ),

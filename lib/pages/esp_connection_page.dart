@@ -1,13 +1,9 @@
 import 'dart:async';
-
-import 'package:bluez/bluez.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:inzynierka/widgets/wifi_form.dart';
 import 'package:inzynierka/globals.dart';
 import 'package:android_intent_plus/android_intent.dart';
-import 'package:android_intent_plus/flag.dart';
 import 'package:location/location.dart';
 import 'dart:io' show Platform;
 
@@ -119,7 +115,7 @@ class EspConnectionPageState extends State<EspConnectionPage> {
         ),
         body: Platform.isAndroid
             ? (isConnected && !isConnecting)
-                ? WifiForm()
+                ? const WifiForm()
                 : Column(children: [
                     Expanded(
                         child: ListView.builder(

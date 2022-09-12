@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:inzynierka/globals.dart';
 
 class LightsPage extends StatefulWidget {
@@ -12,8 +11,6 @@ class LightsPage extends StatefulWidget {
 }
 
 class _LightsPageState extends State<LightsPage> {
-  double _value = 20;
-
   final controllerStart = TextEditingController();
   final controllerStop = TextEditingController();
 
@@ -44,7 +41,7 @@ class _LightsPageState extends State<LightsPage> {
             ),
             ElevatedButton(
               onPressed: () => connection.setConfig("led", "off", ""),
-              child: Text(
+              child: const Text(
                 'Off',
                 style: TextStyle(fontSize: 72),
               ),

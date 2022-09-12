@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -64,16 +62,17 @@ class ConnectionManager with ChangeNotifier {
   }
 
   Future<void> connectToWifi(String ssid, String password) async {
-    var connect = Process.run('nmcli',
+    await Process.run('nmcli',
         ['d', 'wifi', 'connect', ssid.trim(), 'password', password.trim()]);
-    connect.then((val) {
-      print(ssid);
-      print(password);
-      print(val.pid);
-      print(val.stdout);
-      print(val.stderr);
-      print(val.exitCode);
-    });
+    // TODO: Check when Hydro available
+    // connect.then((val) {
+    //   print(ssid);
+    //   print(password);
+    //   print(val.pid);
+    //   print(val.stdout);
+    //   print(val.stderr);
+    //   print(val.exitCode);
+    // });
     checkConnectionStatus();
   }
 
@@ -96,6 +95,7 @@ class ConnectionManager with ChangeNotifier {
   }
 
   ///This function is responsible for checking if connection with ESP is up
+  // TODO: No internet check
   Future<ConnectionStatus> checkConnectionWithEsp() async {
     var url = Uri.parse('http://srv08.mikr.us:20364/heartbeat/');
     try {

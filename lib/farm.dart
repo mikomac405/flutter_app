@@ -8,7 +8,8 @@ Map<String, dynamic> status = jsonDecode(
 
 ///This function is responsible for printing farm components status
 void testFarm(status) {
-  var farm = Farm();
+  // TODO: Finish the farm interface
+  Farm();
 }
 
 class Farm with ChangeNotifier {

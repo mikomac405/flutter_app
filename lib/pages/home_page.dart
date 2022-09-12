@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:inzynierka/connection.dart';
 import 'package:inzynierka/pages/wifi_connection_page.dart';
@@ -34,7 +33,9 @@ class _HomePageState extends State<HomePage> {
   void _connectionChecker() {
     setState(() {
       connectionStatus = connection.connectionStatus;
-      print(connectionStatus);
+      if (kDebugMode) {
+        print(connectionStatus);
+      }
     });
   }
 
@@ -51,13 +52,13 @@ class _HomePageState extends State<HomePage> {
         //  return const WifiConnectionPage();
         return Scaffold(
             appBar: AppBar(title: const Text("No api")),
-            body: Column(children: [const Text("Turn on API")]));
+            body: Column(children: const [Text("Turn on API")]));
       case ConnectionStatus.noEsp:
         return const EspConnectionPage();
       default:
         if (connectionStatus == ConnectionStatus.restApi) {
           return Scaffold(
-              appBar: AppBar(title: Text("Main")),
+              appBar: AppBar(title: const Text("Main")),
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
