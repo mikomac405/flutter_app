@@ -10,16 +10,31 @@ class DebugPage extends StatefulWidget {
 }
 
 class _DebugPageState extends State<DebugPage> {
-  Farm debugFarm = farm;
+  int leds_state = farm.leds.state;
+  String leds_on = farm.leds.lightsOn;
+  String leds_off = farm.leds.lightsOff;
+  String board = farm.board.name;
+  int water_lvl = farm.waterLvl.state;
+  int oxyg = farm.oxygenator.state;
+  int humidity = farm.dht11.humidity;
+  int temp = farm.dht11.temperature;
+
   @override
   void initState() {
     super.initState();
-    farm.addListener(_farmUpdate);
+    farm.addListener(update);
   }
 
-  void _farmUpdate() {
+  void update() {
     setState(() {
-      debugFarm = farm;
+      leds_state = farm.leds.state;
+      leds_on = farm.leds.lightsOn;
+      leds_off = farm.leds.lightsOff;
+      board = farm.board.name;
+      water_lvl = farm.waterLvl.state;
+      oxyg = farm.oxygenator.state;
+      humidity = farm.dht11.humidity;
+      temp = farm.dht11.temperature;
     });
   }
 
@@ -35,9 +50,9 @@ class _DebugPageState extends State<DebugPage> {
               Column(
                 children: [
                   const Text("LEDS"),
-                  Text("State: ${debugFarm.leds.state}"),
-                  Text("LightsOn: ${debugFarm.leds.lightsOn}"),
-                  Text("LightsOff: ${debugFarm.leds.lightsOff}")
+                  Text("State: ${farm.leds.state}"),
+                  Text("LightsOn: ${farm.leds.lightsOn}"),
+                  Text("LightsOff: ${farm.leds.lightsOff}")
                 ],
               ),
             ],
@@ -47,7 +62,7 @@ class _DebugPageState extends State<DebugPage> {
               Column(
                 children: [
                   const Text("BOARD"),
-                  Text("Name: ${debugFarm.board.name}")
+                  Text("Name: ${farm.board.name}")
                 ],
               ),
             ],
@@ -57,7 +72,7 @@ class _DebugPageState extends State<DebugPage> {
               Column(
                 children: [
                   const Text("WATER LEVEL"),
-                  Text("State: ${debugFarm.waterLvl.state}")
+                  Text("State: ${farm.waterLvl.state}")
                 ],
               ),
             ],
@@ -67,7 +82,7 @@ class _DebugPageState extends State<DebugPage> {
               Column(
                 children: [
                   const Text("OXYG"),
-                  Text("State: ${debugFarm.oxygenator.state}")
+                  Text("State: ${farm.oxygenator.state}")
                 ],
               ),
             ],
@@ -76,8 +91,8 @@ class _DebugPageState extends State<DebugPage> {
             Column(
               children: [
                 const Text("DHT11"),
-                Text("Humidity: ${debugFarm.dht11.humidity}"),
-                Text("Temperature: ${debugFarm.dht11.temperature}")
+                Text("Humidity: ${farm.dht11.humidity}"),
+                Text("Temperature: ${farm.dht11.temperature}")
               ],
             ),
           ])

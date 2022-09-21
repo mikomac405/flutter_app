@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:core';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 
@@ -22,10 +23,15 @@ class Farm with ChangeNotifier {
   Farm();
 
   void update(config) {
-    leds.update(config["leds"]);
+    leds.update(config["led"]);
     waterLvl.update(config["waterLvl"]);
     oxygenator.update(config["oxygenator"]);
     dht11.update(config["dht11"]);
+    notifyListeners();
+  }
+
+  void randHum() {
+    dht11.humidity = Random().nextInt(90) + 10;
     notifyListeners();
   }
 }
@@ -36,9 +42,9 @@ class Leds {
   String lightsOff = "00:00";
 
   void update(var newConfig) {
-    state = newConfig["state"];
-    lightsOff = newConfig["lightsOff"];
-    lightsOn = newConfig["lightsOn"];
+    state = newConfig["status"];
+    lightsOff = newConfig["lightOff"];
+    lightsOn = newConfig["lightOn"];
   }
 
   Leds();
@@ -55,7 +61,7 @@ class WaterLevel {
   WaterLevel();
 
   void update(var newConfig) {
-    state = newConfig["state"];
+    state = newConfig["status"];
   }
 }
 
@@ -65,7 +71,7 @@ class Oxygenator {
   Oxygenator();
 
   void update(var newConfig) {
-    state = newConfig["state"];
+    state = newConfig["status"];
   }
 }
 
@@ -76,7 +82,7 @@ class DHT11 {
   DHT11();
 
   void update(var newConfig) {
-    humidity = newConfig["humidity"];
-    temperature = newConfig["temperature"];
+    humidity = newConfig["hum"];
+    temperature = newConfig["temp"];
   }
 }

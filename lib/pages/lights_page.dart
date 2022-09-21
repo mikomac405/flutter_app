@@ -15,6 +15,13 @@ class _LightsPageState extends State<LightsPage> {
   final controllerStop = TextEditingController();
 
   @override
+  void initState() {
+    controllerStart.text = farm.leds.lightsOn;
+    controllerStop.text = farm.leds.lightsOff;
+    super.initState();
+  }
+
+  @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     controllerStart.dispose();
