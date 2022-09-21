@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:inzynierka/pages/debug_page.dart';
@@ -15,10 +16,10 @@ void main() {
     connection.checkConnectionStatus();
   });
 
-  // Timer.periodic(const Duration(seconds: 10), (timer) {
-  //   var status = connection.getComponentsStatus();
-  //   farm.update(jsonDecode(status));
-  // });
+  Timer.periodic(const Duration(seconds: 10), (timer) {
+    var status = connection.getComponentsStatus();
+    print(status.toString());
+  });
 
   runApp(const MyApp());
 }

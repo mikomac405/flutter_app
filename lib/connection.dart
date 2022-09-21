@@ -77,7 +77,13 @@ class ConnectionManager with ChangeNotifier {
   }
 
   Future<String> getComponentsStatus() async {
-    var status = await http.get(Uri.parse("http://srv08.mikr.us:20364/status"));
+    const bool _isOffline = bool.hasEnvironment("OFFLINE")
+        ? bool.fromEnvironment("OFFLINE")
+        : false;
+    var url = _isOffline
+        ? Uri.parse("http://srv08.mikr.us:20364/status/test")
+        : Uri.parse("http://srv08.mikr.us:20364/status");
+    var status = await http.get(url);
     return status.body;
   }
 
@@ -97,7 +103,12 @@ class ConnectionManager with ChangeNotifier {
   ///This function is responsible for checking if connection with ESP is up
   // TODO: No internet check
   Future<ConnectionStatus> checkConnectionWithEsp() async {
-    var url = Uri.parse('http://srv08.mikr.us:20364/heartbeat/');
+    const bool _isOffline = bool.hasEnvironment("OFFLINE")
+        ? bool.fromEnvironment("OFFLINE")
+        : false;
+    var url = _isOffline
+        ? Uri.parse('http://srv08.mikr.us:20364/heartbeat/test')
+        : Uri.parse('http://srv08.mikr.us:20364/heartbeat');
     try {
       var response = await http.get(url);
       if (kDebugMode) {

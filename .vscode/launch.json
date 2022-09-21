@@ -24,6 +24,17 @@
             ]
         },
         {
+            "name": "flutter_app_esp32_offline",
+            "request": "launch",
+            "type": "dart",
+            "toolArgs": [
+                "--dart-define",
+                "DEV=true",
+                "--dart-define",
+                "OFFLINE=true"
+            ]
+        },
+        {
             "name": "flutter_app (profile mode)",
             "request": "launch",
             "type": "dart",
