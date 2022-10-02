@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:convert';
 
 enum ConnectionStatus {
@@ -38,17 +39,21 @@ class ConnectionManager with ChangeNotifier {
   /// connection to ESP32 through Rest API or needs to use
   /// Bluetooth protocol.
   void checkConnectionStatus() async {
-    try {
-      final result = await InternetAddress.lookup('example.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        if (connectionStatus == ConnectionStatus.noInternet ||
-            connectionStatus == ConnectionStatus.none) {
-          connectionStatus = ConnectionStatus.internet;
+    if (kIsWeb) {
+      connectionStatus = ConnectionStatus.internet;
+    } else {
+      try {
+        final result = await InternetAddress.lookup('example.com');
+        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          if (connectionStatus == ConnectionStatus.noInternet ||
+              connectionStatus == ConnectionStatus.none) {
+            connectionStatus = ConnectionStatus.internet;
+          }
         }
+      } on SocketException catch (_) {
+        connectionStatus = ConnectionStatus.noInternet;
+        return;
       }
-    } on SocketException catch (_) {
-      connectionStatus = ConnectionStatus.noInternet;
-      return;
     }
 
     checkConnectionWithEsp().then((value) => {connectionStatus = value});
