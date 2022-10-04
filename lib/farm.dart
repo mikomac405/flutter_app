@@ -1,17 +1,7 @@
-import 'dart:convert';
 import 'dart:core';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-
-Map<String, dynamic> status = jsonDecode(
-    "{\"led\":{\"state\":1,\"lightsOn\":\"10:0\",\"lightsOff\":\"22:0\"},\"board\":\"\",\"waterLvl\":{\"state\":0}}");
-
-///This function is responsible for printing farm components status
-void testFarm(status) {
-  // TODO: Finish the farm interface
-  Farm();
-}
 
 class Farm with ChangeNotifier {
   Leds leds = Leds();
@@ -19,6 +9,7 @@ class Farm with ChangeNotifier {
   WaterLevel waterLvl = WaterLevel();
   Oxygenator oxygenator = Oxygenator();
   DHT11 dht11 = DHT11();
+  Fan fan = Fan();
 
   Farm();
 
@@ -27,6 +18,7 @@ class Farm with ChangeNotifier {
     waterLvl.update(config["waterLvl"]);
     oxygenator.update(config["oxygenator"]);
     dht11.update(config["dht11"]);
+    fan.update(config["fan"]);
     notifyListeners();
   }
 
@@ -84,5 +76,16 @@ class DHT11 {
   void update(var newConfig) {
     humidity = newConfig["hum"];
     temperature = newConfig["temp"];
+  }
+}
+
+class Fan {
+  int state = 0;
+  int maxTemp = 0;
+  int maxHumidity = 0;
+
+  void update(var newConfig) {
+    maxTemp = newConfig["max_temp"];
+    maxHumidity = newConfig["max_hum"];
   }
 }

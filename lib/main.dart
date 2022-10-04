@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:inzynierka/pages/debug_page.dart';
@@ -17,13 +16,10 @@ void main() {
     connection.checkConnectionStatus();
   });
 
-  Timer.periodic(const Duration(seconds: 2), (timer) {
+  Timer.periodic(const Duration(seconds: 5), (timer) {
     var status = connection.getComponentsStatus();
     status.then((value) => farm.update(jsonDecode(value)));
   });
-  //Timer.periodic(const Duration(seconds: 2), (timer) {
-  //  farm.randHum();
-  //});
 
   runApp(const MyApp());
 }
