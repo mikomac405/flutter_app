@@ -16,6 +16,9 @@ enum ConnectionStatus {
 class ConnectionManager with ChangeNotifier {
   static final ConnectionManager _instance = ConnectionManager._internal();
   ConnectionStatus _connectionStatus = ConnectionStatus.none;
+  static bool get _isOffline => const bool.hasEnvironment("OFFLINE")
+      ? const bool.fromEnvironment("OFFLINE")
+      : false;
 
   ConnectionStatus get connectionStatus => _connectionStatus;
   set connectionStatus(ConnectionStatus newState) {
@@ -81,9 +84,6 @@ class ConnectionManager with ChangeNotifier {
   }
 
   Future<String> getComponentsStatus() async {
-    const bool _isOffline = bool.hasEnvironment("OFFLINE")
-        ? bool.fromEnvironment("OFFLINE")
-        : false;
     var url = _isOffline
         ? Uri.parse("http://srv08.mikr.us:20364/status/test")
         : Uri.parse("http://srv08.mikr.us:20364/status");
@@ -93,6 +93,9 @@ class ConnectionManager with ChangeNotifier {
 
   ///This function is responsible for sending commands to ESP
   Future<void> setConfig(component, command, args) async {
+    if (_isOffline) {
+      return;
+    }
     var url =
         Uri.parse("http://srv08.mikr.us:20364/config/" + component + "/set/");
     Map jsonbody = {'command': command, 'args': args};
@@ -107,9 +110,6 @@ class ConnectionManager with ChangeNotifier {
   ///This function is responsible for checking if connection with ESP is up
   // TODO: No internet check
   Future<ConnectionStatus> checkConnectionWithEsp() async {
-    const bool _isOffline = bool.hasEnvironment("OFFLINE")
-        ? bool.fromEnvironment("OFFLINE")
-        : false;
     var url = _isOffline
         ? Uri.parse('http://srv08.mikr.us:20364/heartbeat/test')
         : Uri.parse('http://srv08.mikr.us:20364/heartbeat');
