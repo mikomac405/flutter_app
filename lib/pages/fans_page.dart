@@ -18,7 +18,7 @@ class _FansPageState extends State<FansPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('FansPage'),
+        title: const Text('Fans Settings'),
       ),
       body: Center(
         child: Column(
