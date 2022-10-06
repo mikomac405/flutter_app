@@ -24,6 +24,35 @@ void main() {
   runApp(const MyApp());
 }
 
+class PageViewDemo extends StatefulWidget {
+  @override
+  _PageViewDemoState createState() => _PageViewDemoState();
+}
+
+class _PageViewDemoState extends State<PageViewDemo> {
+  PageController _controller = PageController(
+    initialPage: 1,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PageView(
+      controller: _controller,
+      children: [
+        FansPage(title: "Fans"),
+        HomePage(title: "Home"),
+        LightsPage(title: "Lights"),
+      ],
+    );
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -36,17 +65,6 @@ class MyApp extends StatelessWidget {
 
         //height: 5, fontWeight: FontWeight.bold
       ),
-      home: const HomePage(title: 'Flutter Home Page'),
-      routes: <String, WidgetBuilder>{
-        '/lightspage': (BuildContext context) =>
-            const LightsPage(title: "LightsPage"),
-        '/fanspage': (BuildContext context) =>
-            const FansPage(title: "FansPage"),
-        '/mqtttestpage': (BuildContext context) =>
-            const MqttTestPage(title: "MqttPage"),
-        '/debugpage': (BuildContext context) =>
-            const DebugPage(title: "DebugPage")
-      },
     );
   }
 }
