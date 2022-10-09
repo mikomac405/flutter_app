@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:inzynierka/pages/debug_page.dart';
-import 'package:inzynierka/pages/mqtt_test_page.dart';
 import 'connection.dart';
 import 'pages/fans_page.dart';
 import 'pages/lights_page.dart';
@@ -25,6 +22,8 @@ void main() {
 }
 
 class PageViewDemo extends StatefulWidget {
+  const PageViewDemo({Key? key}) : super(key: key);
+
   @override
   _PageViewDemoState createState() => _PageViewDemoState();
 }
@@ -58,12 +57,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-
-        //height: 5, fontWeight: FontWeight.bold
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Padding(
+          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+          child: PageViewDemo(),
+        ),
       ),
     );
   }

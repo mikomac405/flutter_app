@@ -60,25 +60,6 @@ class _HomePageState extends State<HomePage> {
           return Scaffold(
               appBar: AppBar(
                 title: const Text("Farm Stats"),
-                actions: [
-                  IconButton(
-                    constraints: const BoxConstraints.expand(width: 80),
-                    icon: const Text('Lights Settings',
-                        textAlign: TextAlign.center),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed('/lightspage');
-                    },
-                  ),
-                ],
-                leading: (IconButton(
-                  constraints: const BoxConstraints.expand(width: 80),
-                  icon:
-                      const Text('Fans Settings', textAlign: TextAlign.center),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/fanspage');
-                  },
-                )),
-                leadingWidth: 80,
               ),
               body: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
