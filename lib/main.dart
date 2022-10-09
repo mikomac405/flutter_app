@@ -30,7 +30,7 @@ class PageViewDemo extends StatefulWidget {
 }
 
 class _PageViewDemoState extends State<PageViewDemo> {
-  PageController _controller = PageController(
+  final PageController _controller = PageController(
     initialPage: 1,
   );
 
@@ -44,7 +44,7 @@ class _PageViewDemoState extends State<PageViewDemo> {
   Widget build(BuildContext context) {
     return PageView(
       controller: _controller,
-      children: [
+      children: const [
         FansPage(title: "Fans"),
         HomePage(title: "Home"),
         LightsPage(title: "Lights"),
