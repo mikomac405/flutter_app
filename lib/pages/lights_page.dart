@@ -29,6 +29,33 @@ class _LightsPageState extends State<LightsPage> {
     super.dispose();
   }
 
+  TimeOfDay _timeOn = const TimeOfDay(hour: 7, minute: 15);
+  TimeOfDay _timeOff = const TimeOfDay(hour: 18, minute: 15);
+
+  void _selectTimeOn() async {
+    final TimeOfDay? newTime = await showTimePicker(
+      context: context,
+      initialTime: _timeOn,
+    );
+    if (newTime != null) {
+      setState(() {
+        _timeOn = newTime;
+      });
+    }
+  }
+
+  void _selectTimeOff() async {
+    final TimeOfDay? newTime = await showTimePicker(
+      context: context,
+      initialTime: _timeOff,
+    );
+    if (newTime != null) {
+      setState(() {
+        _timeOff = newTime;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,36 +85,36 @@ class _LightsPageState extends State<LightsPage> {
               children: <Widget>[
                 Column(
                   children: <Widget>[
-                    const Text(
-                      "Start time",
-                      style: TextStyle(fontSize: 36),
-                    ),
                     SizedBox(
                         width: 100,
                         child: TextField(
                           controller: controllerStart,
                         )),
                     ElevatedButton(
-                        onPressed: () => connection.setConfig(
-                            "led", "set_time_on", controllerStart.text),
-                        child: const Text("Set time on"))
+                      onPressed: _selectTimeOn,
+                      child: const Text('Set time on'),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Selected time: ${_timeOn.format(context)}',
+                    )
                   ],
                 ),
                 Column(
                   children: <Widget>[
-                    const Text(
-                      "Stop time",
-                      style: TextStyle(fontSize: 36),
-                    ),
                     SizedBox(
                         width: 100,
                         child: TextField(
                           controller: controllerStop,
                         )),
                     ElevatedButton(
-                        onPressed: () => connection.setConfig(
-                            "led", "set_time_off", controllerStop.text),
-                        child: const Text("Set time off"))
+                      onPressed: _selectTimeOff,
+                      child: const Text('Set time off'),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Selected time: ${_timeOff.format(context)}',
+                    )
                   ],
                 ),
               ],
