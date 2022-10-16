@@ -66,20 +66,25 @@ class _LightsPageState extends State<LightsPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            ElevatedButton(
-              onPressed: () => connection.setConfig("led", "on", ""),
-              child: const Text(
-                'On',
-                style: TextStyle(fontSize: 72),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => connection.setConfig("led", "off", ""),
-              child: const Text(
-                'Off',
-                style: TextStyle(fontSize: 72),
-              ),
-            ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => connection.setConfig("led", "on", ""),
+                    child: const Text(
+                      'On',
+                      style: TextStyle(fontSize: 72),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => connection.setConfig("led", "off", ""),
+                    child: const Text(
+                      'Off',
+                      style: TextStyle(fontSize: 72),
+                    ),
+                  )
+                ]),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[

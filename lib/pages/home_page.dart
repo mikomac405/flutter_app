@@ -105,12 +105,12 @@ class _HomePageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+                                const SizedBox(height: 10),
                                 const Text("WATER LEVEL",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         height: 0,
                                         fontSize: 20)),
-                                const SizedBox(height: 5),
                                 if (farm.waterLvl.state == 0) ...[
                                   const Text("Doesn't requier filling up"),
                                 ] else ...[
@@ -126,6 +126,7 @@ class _HomePageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+                                const SizedBox(height: 10),
                                 const Text("AERATION",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -158,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 30),
                         Text("Humidity: ${farm.dht11.humidity}%"),
                         const SizedBox(width: 10),
                         Text("Temperature: ${farm.dht11.temperature}°C")
