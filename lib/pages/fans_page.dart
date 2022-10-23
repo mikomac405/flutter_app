@@ -12,7 +12,7 @@ class FansPage extends StatefulWidget {
 }
 
 class _FansPageState extends State<FansPage> {
-  int _temperatureValue = 25;
+  int _temperatureValue = farm.fan.maxTemp;
   int _humidityValue = 50;
   double _fanPowerValue = 20;
 
