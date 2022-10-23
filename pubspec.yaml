@@ -45,6 +45,7 @@ dependencies:
   number_inc_dec: ^0.8.0
   network_info_plus: ^2.1.4+1
   base_codecs: ^1.0.1
+  numberpicker: ^2.1.1
 
 dev_dependencies:
   flutter_test:
