@@ -95,7 +95,6 @@ class _AppControllerState extends State<AppController> {
       case ConnectionStatus.noInternet:
         return const WifiConnectionPage();
       case ConnectionStatus.noRestApi:
-        //  return const WifiConnectionPage();
         return Scaffold(
             appBar: AppBar(title: const Text("No api")),
             body: Column(children: const [Text("Turn on API")]));
@@ -149,6 +148,50 @@ class _AppControllerState extends State<AppController> {
                         ));
                       },
                       child: const Text('Print credentials'),
+                    ),
+                    const Divider(),
+                    ElevatedButton(
+                      onPressed: () async {
+                        var responseToken = await connection.getToken();
+                        switch(responseToken) {
+                          case "Username incorrect": {
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text("Username incorrect"),
+                            ));
+                            break;  
+                          }
+                          case "Password incorrect": {
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text("Password incorrect"),
+                            ));
+                            break;
+                          }
+                          default:{
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text("Got token!"),
+                            ));
+                            token = responseToken; 
+                            break;
+                          }
+                        }
+                      },
+                      child: const Text('Get token'),
+                    ),
+                    const Divider(),
+                    ElevatedButton(
+                      onPressed: () async {
+                        var resp = await connection.testToken();
+                        if(resp=="Ok"){
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text("Token ok!"),
+                            ));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text("Bad token!"),
+                            ));
+                        }
+                      },
+                      child: const Text('Test token'),
                     ),
                   ],
                 ),
