@@ -42,7 +42,10 @@ class ConnectionManager with ChangeNotifier {
   /// Bluetooth protocol.
   void checkConnectionStatus() async {
     if (kIsWeb) {
-      connectionStatus = ConnectionStatus.internet;
+      if (connectionStatus == ConnectionStatus.noInternet ||
+              connectionStatus == ConnectionStatus.none) {
+            connectionStatus = ConnectionStatus.internet;
+          }
     } else {
       try {
         final result = await InternetAddress.lookup('example.com');

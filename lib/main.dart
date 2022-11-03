@@ -59,6 +59,9 @@ class _AppControllerState extends State<AppController> {
 
   ConnectionStatus connectionStatus = ConnectionStatus.none;
 
+  final loginController = TextEditingController();
+  final passwordController = TextEditingController();
+
   @override
   void dispose() {
     _controller.dispose();
@@ -100,13 +103,57 @@ class _AppControllerState extends State<AppController> {
         return const EspConnectionPage();
       default:
         if (connectionStatus == ConnectionStatus.restApi) {
-          return PageView(
-            controller: _controller,
-            children: const [
-              FansPage(title: "Fans"),
-              HomePage(title: "Home"),
-              LightsPage(title: "Lights"),
-            ],
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text("Hydro"),
+            ),
+            body: PageView(
+              controller: _controller,
+              children: const [
+                FansPage(title: "Fans"),
+                HomePage(title: "Home"),
+                LightsPage(title: "Lights"),
+              ],
+            ),
+            drawer: Drawer(
+              child: Container(
+                margin: const EdgeInsets.all(10),
+                child: ListView(
+                  children: [
+                    const Text("API Credentials:"),
+                    TextField(
+                      controller: loginController,
+                      decoration: const InputDecoration(labelText: "Login"),
+                    ),
+                    TextField(
+                      controller: passwordController,
+                      decoration: const InputDecoration(labelText: "Password"),
+                    ),
+                    // Container(
+                    //   margin: const EdgeInsets.all(5),
+                    // ),
+                    const Divider(),
+                    ElevatedButton(
+                      onPressed: () {
+                        login = loginController.text;
+                        password = passwordController.text;
+                      },
+                      child: const Text('Save credentials'),
+                    ),
+                    const Divider(),
+                    ElevatedButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              "Login: " + login + "\nPassword: " + password),
+                        ));
+                      },
+                      child: const Text('Print credentials'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           );
         } else {
           return Column(children: const [Text("Something gone wrong!")]);
