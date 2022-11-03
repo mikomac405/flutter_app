@@ -55,4 +55,6 @@ app.*.map.json
 .vscode/
 windows/
 deploy_debug.ps1
-deploy_debug.ps1
+android/
+.metadata
+
