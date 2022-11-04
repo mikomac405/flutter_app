@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:inzynierka/globals.dart';
+
 enum ConnectionStatus {
   none,
   internet,
@@ -84,6 +86,28 @@ class ConnectionManager with ChangeNotifier {
     //   print(val.exitCode);
     // });
     checkConnectionStatus();
+  }
+
+  Future<String> getToken() async{
+    var url = Uri.parse("http://srv08.mikr.us:20364/auth");
+    Map jsonBody = {'username': login, 'password': password};
+    var jsonBodyEnocoded = json.encode(jsonBody);
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: jsonBodyEnocoded);
+    if (kDebugMode) {
+      print(response.body);
+    }
+    return response.body;
+  }
+
+  Future<String> testToken() async{
+    var url = Uri.parse("http://srv08.mikr.us:20364/token/test");
+    var response = await http.post(url,
+        headers: {"Authorization": "Bearer $token"});
+    if (kDebugMode) {
+      print(response.body);
+    }
+    return response.body;
   }
 
   Future<String> getComponentsStatus() async {

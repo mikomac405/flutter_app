@@ -12,3 +12,4 @@ bool disconnectRequest = false;
 
 String login = "";
 String password = "";
+String token = "";
