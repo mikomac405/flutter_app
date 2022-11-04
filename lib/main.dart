@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:inzynierka/data_mng.dart';
 import 'connection.dart';
 import 'pages/fans_page.dart';
 import 'pages/lights_page.dart';
@@ -253,6 +254,14 @@ class _AppControllerState extends State<AppController> {
                         ));
                       },
                       child: const Text('Test token'),
+                    ),
+                    const Divider(),
+                    ElevatedButton(
+                      onPressed: () {
+                        var data = DailyDataSet("2020-10-26", "2020-10-30");
+                        print(data);
+                      },
+                      child: const Text('Test data by day'),
                     ),
                   ],
                 ),
