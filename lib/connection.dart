@@ -22,6 +22,10 @@ class ConnectionManager with ChangeNotifier {
       ? const bool.fromEnvironment("OFFLINE")
       : false;
 
+  static String get _baseUrl => const bool.hasEnvironment("IP")
+      ? const String.fromEnvironment("IP")
+      : "http://srv08.mikr.us:20364";
+
   ConnectionStatus get connectionStatus => _connectionStatus;
   set connectionStatus(ConnectionStatus newState) {
     _connectionStatus = newState;
@@ -88,8 +92,8 @@ class ConnectionManager with ChangeNotifier {
     checkConnectionStatus();
   }
 
-  Future<String> getToken() async{
-    var url = Uri.parse("http://srv08.mikr.us:20364/auth");
+  Future<String> getToken() async {
+    var url = Uri.parse("$_baseUrl/auth");
     Map jsonBody = {'username': login, 'password': password};
     var jsonBodyEnocoded = json.encode(jsonBody);
     var response = await http.post(url,
@@ -100,10 +104,10 @@ class ConnectionManager with ChangeNotifier {
     return response.body;
   }
 
-  Future<String> testToken() async{
-    var url = Uri.parse("http://srv08.mikr.us:20364/token/test");
-    var response = await http.post(url,
-        headers: {"Authorization": "Bearer $token"});
+  Future<String> testToken() async {
+    var url = Uri.parse("$_baseUrl/token/test");
+    var response =
+        await http.post(url, headers: {"Authorization": "Bearer $token"});
     if (kDebugMode) {
       print(response.body);
     }
@@ -112,8 +116,8 @@ class ConnectionManager with ChangeNotifier {
 
   Future<String> getComponentsStatus() async {
     var url = _isOffline
-        ? Uri.parse("http://srv08.mikr.us:20364/status/test")
-        : Uri.parse("http://srv08.mikr.us:20364/status");
+        ? Uri.parse("$_baseUrl/status/test")
+        : Uri.parse("$_baseUrl/status");
     var status = await http.get(url);
     return status.body;
   }
@@ -123,8 +127,7 @@ class ConnectionManager with ChangeNotifier {
     if (_isOffline) {
       return;
     }
-    var url =
-        Uri.parse("http://srv08.mikr.us:20364/config/" + component + "/set/");
+    var url = Uri.parse("$_baseUrl/config/" + component + "/set/");
     Map jsonbody = {'command': command, 'args': args};
     var jsonbody1 = json.encode(jsonbody);
     var response = await http.post(url,
@@ -138,8 +141,8 @@ class ConnectionManager with ChangeNotifier {
   // TODO: No internet check
   Future<ConnectionStatus> checkConnectionWithEsp() async {
     var url = _isOffline
-        ? Uri.parse('http://srv08.mikr.us:20364/heartbeat/test')
-        : Uri.parse('http://srv08.mikr.us:20364/heartbeat');
+        ? Uri.parse('$_baseUrl/heartbeat/test')
+        : Uri.parse('$_baseUrl/heartbeat');
     try {
       var response = await http.get(url);
       if (kDebugMode) {
