@@ -257,9 +257,15 @@ class _AppControllerState extends State<AppController> {
                     ),
                     const Divider(),
                     ElevatedButton(
-                      onPressed: () {
-                        var data = DailyDataSet("2020-10-26", "2020-10-30");
-                        print(data);
+                      onPressed: () async {
+                        var data = await getDailyData("2020-10-15", "2020-10-18");
+                        for(var el in data){
+                          print(el);
+                        }
+                        var data2 = await getHourlyData("2020-10-15 10:00:00", "2020-10-16 15:00:00");
+                        for(var el in data2){
+                          print(el);
+                        }
                       },
                       child: const Text('Test data by day'),
                     ),
