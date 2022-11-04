@@ -43,9 +43,9 @@ class ConnectionManager with ChangeNotifier {
   void checkConnectionStatus() async {
     if (kIsWeb) {
       if (connectionStatus == ConnectionStatus.noInternet ||
-              connectionStatus == ConnectionStatus.none) {
-            connectionStatus = ConnectionStatus.internet;
-          }
+          connectionStatus == ConnectionStatus.none) {
+        connectionStatus = ConnectionStatus.internet;
+      }
     } else {
       try {
         final result = await InternetAddress.lookup('example.com');

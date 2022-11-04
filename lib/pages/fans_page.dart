@@ -16,8 +16,113 @@ class _FansPageState extends State<FansPage> {
   int _humidityValue = 50;
   double _fanPowerValue = 20;
 
-  @override
-  Widget build(BuildContext context) {
+  Widget portraitMode() {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => connection.setConfig(
+                        'vent', 'on', _fanPowerValue.toString()),
+                    child: const Text(
+                      'On',
+                      style: TextStyle(fontSize: 72),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => connection.setConfig(
+                        'vent', 'off', _fanPowerValue.toString()),
+                    child: const Text(
+                      'Off',
+                      style: TextStyle(fontSize: 72),
+                    ),
+                  ),
+                ]),
+            Column(
+              children: <Widget>[
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Power",
+                        style: TextStyle(fontSize: 30),
+                      ),
+                      SizedBox(
+                          width: 200,
+                          child: (Slider(
+                            min: 0.0,
+                            max: 100.0,
+                            thumbColor: Colors.blueGrey,
+                            value: _fanPowerValue,
+                            onChanged: (value) {
+                              setState(() {
+                                _fanPowerValue = value;
+                              });
+                            },
+                          ))),
+                      Text(
+                        _fanPowerValue.toInt().toString() + "%",
+                        style: const TextStyle(fontSize: 30),
+                      ),
+                    ])
+              ],
+            ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Humidity",
+                    style: TextStyle(fontSize: 30, height: 3.5),
+                  ),
+                  SizedBox(
+                      child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: NumberPicker(
+                            value: _humidityValue,
+                            minValue: 0,
+                            maxValue: 100,
+                            onChanged: (value) =>
+                                setState(() => _humidityValue = value),
+                          ))),
+                  const Text(
+                    "%",
+                    style: TextStyle(fontSize: 30, height: 3.5),
+                  ),
+                ]),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Temperature",
+                    style: TextStyle(fontSize: 30, height: 3.5),
+                  ),
+                  NumberPicker(
+                    value: _temperatureValue,
+                    minValue: 0,
+                    maxValue: 100,
+                    onChanged: (value) =>
+                        setState(() => _temperatureValue = value),
+                  ),
+                  const Text(
+                    "°C",
+                    style: TextStyle(fontSize: 30, height: 3.5),
+                  )
+                ]),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget landscapeMode() {
     return Scaffold(
       body: Center(
         child: Column(
@@ -117,6 +222,21 @@ class _FansPageState extends State<FansPage> {
                 ])
           ],
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          if (orientation == Orientation.portrait) {
+            return portraitMode();
+          } else {
+            return landscapeMode();
+          }
+        },
       ),
     );
   }
