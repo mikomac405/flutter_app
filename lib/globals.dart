@@ -9,3 +9,7 @@ late FlutterBluePlus androidClient;
 late BluetoothDevice androidDevice;
 
 bool disconnectRequest = false;
+
+String login = "";
+String password = "";
+String token = "";

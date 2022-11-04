@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:inzynierka/globals.dart';
+
 enum ConnectionStatus {
   none,
   internet,
@@ -19,6 +21,10 @@ class ConnectionManager with ChangeNotifier {
   static bool get _isOffline => const bool.hasEnvironment("OFFLINE")
       ? const bool.fromEnvironment("OFFLINE")
       : false;
+
+  String get baseUrl => const bool.hasEnvironment("IP")
+      ? const String.fromEnvironment("IP")
+      : "http://srv08.mikr.us:20364";
 
   ConnectionStatus get connectionStatus => _connectionStatus;
   set connectionStatus(ConnectionStatus newState) {
@@ -42,7 +48,10 @@ class ConnectionManager with ChangeNotifier {
   /// Bluetooth protocol.
   void checkConnectionStatus() async {
     if (kIsWeb) {
-      connectionStatus = ConnectionStatus.internet;
+      if (connectionStatus == ConnectionStatus.noInternet ||
+          connectionStatus == ConnectionStatus.none) {
+        connectionStatus = ConnectionStatus.internet;
+      }
     } else {
       try {
         final result = await InternetAddress.lookup('example.com');
@@ -83,10 +92,32 @@ class ConnectionManager with ChangeNotifier {
     checkConnectionStatus();
   }
 
+  Future<String> getToken() async {
+    var url = Uri.parse("$baseUrl/auth");
+    Map jsonBody = {'username': login, 'password': password};
+    var jsonBodyEnocoded = json.encode(jsonBody);
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: jsonBodyEnocoded);
+    if (kDebugMode) {
+      print(response.body);
+    }
+    return response.body;
+  }
+
+  Future<String> testToken() async {
+    var url = Uri.parse("$baseUrl/token/test");
+    var response =
+        await http.post(url, headers: {"Authorization": "Bearer $token"});
+    if (kDebugMode) {
+      print(response.body);
+    }
+    return response.body;
+  }
+
   Future<String> getComponentsStatus() async {
     var url = _isOffline
-        ? Uri.parse("http://srv08.mikr.us:20364/status/test")
-        : Uri.parse("http://srv08.mikr.us:20364/status");
+        ? Uri.parse("$baseUrl/status/test")
+        : Uri.parse("$baseUrl/status");
     var status = await http.get(url);
     return status.body;
   }
@@ -96,8 +127,7 @@ class ConnectionManager with ChangeNotifier {
     if (_isOffline) {
       return;
     }
-    var url =
-        Uri.parse("http://srv08.mikr.us:20364/config/" + component + "/set/");
+    var url = Uri.parse("$baseUrl/config/" + component + "/set/");
     Map jsonbody = {'command': command, 'args': args};
     var jsonbody1 = json.encode(jsonbody);
     var response = await http.post(url,
@@ -111,8 +141,8 @@ class ConnectionManager with ChangeNotifier {
   // TODO: No internet check
   Future<ConnectionStatus> checkConnectionWithEsp() async {
     var url = _isOffline
-        ? Uri.parse('http://srv08.mikr.us:20364/heartbeat/test')
-        : Uri.parse('http://srv08.mikr.us:20364/heartbeat');
+        ? Uri.parse('$baseUrl/heartbeat/test')
+        : Uri.parse('$baseUrl/heartbeat');
     try {
       var response = await http.get(url);
       if (kDebugMode) {

@@ -57,4 +57,6 @@ windows/
 deploy_debug.ps1
 android/
 .metadata
-
+/.dart_tool
+/linux
+/macos
