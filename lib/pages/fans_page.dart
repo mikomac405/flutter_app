@@ -58,7 +58,7 @@ class _FansPageState extends State<FansPage> {
                           child: (Slider(
                             min: 0.0,
                             max: 100.0,
-                            thumbColor: Colors.blueGrey,
+                            thumbColor: Colors.black,
                             value: _fanPowerValue,
                             onChanged: (value) {
                               setState(() {

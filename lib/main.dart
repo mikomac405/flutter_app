@@ -36,7 +36,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          primary: Colors.black,
+          secondary: Colors.black,
+        ),
+      ),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Padding(
@@ -106,9 +112,11 @@ class _AppControllerState extends State<AppController> {
       default:
         if (connectionStatus == ConnectionStatus.restApi) {
           return Scaffold(
-            appBar: AppBar(
-              title: const Text("Hydro"),
-            ),
+            appBar: AppBar(title: const Text("Hydro"), actions: [
+              Image.asset(
+                "assets/images/farmIcon.png",
+              ),
+            ]),
             body: PageView(
               controller: _controller,
               children: const [
@@ -128,67 +136,68 @@ class _AppControllerState extends State<AppController> {
                         controller: loginController,
                         decoration: const InputDecoration(labelText: "Login"),
                         onTap: () {
-                          kIsWeb || !(Platform.isAndroid || Platform.isIOS) ?
-                          showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                    title: const Text("Login Dialog"),
-                                    content: SingleChildScrollView(
-                                      child: ListBody(children: [
-                                        TextField(
-                                          controller: loginController,
-                                          decoration: const InputDecoration(
-                                              labelText: "Login"),
+                          kIsWeb || !(Platform.isAndroid || Platform.isIOS)
+                              ? showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                        title: const Text("Login Dialog"),
+                                        content: SingleChildScrollView(
+                                          child: ListBody(children: [
+                                            TextField(
+                                              controller: loginController,
+                                              decoration: const InputDecoration(
+                                                  labelText: "Login"),
+                                            ),
+                                            VirtualKeyboard(
+                                                type: VirtualKeyboardType
+                                                    .Alphanumeric,
+                                                textController: loginController)
+                                          ]),
                                         ),
-                                        VirtualKeyboard(
-                                            type: VirtualKeyboardType
-                                                .Alphanumeric,
-                                            textController: loginController)
-                                      ]),
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text("Ok"))
-                                    ],
-                                  ))
-                                  : Null;
+                                        actions: <Widget>[
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text("Ok"))
+                                        ],
+                                      ))
+                              : Null;
                         }),
                     TextField(
-                      controller: passwordController,
-                      decoration: const InputDecoration(labelText: "Password"),
-                      onTap: () {
-                          kIsWeb || !(Platform.isAndroid || Platform.isIOS) ?
-                          showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                    title: const Text("Password Dialog"),
-                                    content: SingleChildScrollView(
-                                      child: ListBody(children: [
-                                        TextField(
-                                          controller: passwordController,
-                                          decoration: const InputDecoration(
-                                              labelText: "Password"),
+                        controller: passwordController,
+                        decoration:
+                            const InputDecoration(labelText: "Password"),
+                        onTap: () {
+                          kIsWeb || !(Platform.isAndroid || Platform.isIOS)
+                              ? showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                        title: const Text("Password Dialog"),
+                                        content: SingleChildScrollView(
+                                          child: ListBody(children: [
+                                            TextField(
+                                              controller: passwordController,
+                                              decoration: const InputDecoration(
+                                                  labelText: "Password"),
+                                            ),
+                                            VirtualKeyboard(
+                                                type: VirtualKeyboardType
+                                                    .Alphanumeric,
+                                                textController:
+                                                    passwordController)
+                                          ]),
                                         ),
-                                        VirtualKeyboard(
-                                            type: VirtualKeyboardType
-                                                .Alphanumeric,
-                                            textController: passwordController)
-                                      ]),
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text("Ok"))
-                                    ],
-                                  ))
-                                  : Null;
-                        }
-                    ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text("Ok"))
+                                        ],
+                                      ))
+                              : Null;
+                        }),
                     // Container(
                     //   margin: const EdgeInsets.all(5),
                     // ),
