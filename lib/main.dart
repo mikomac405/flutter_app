@@ -154,27 +154,24 @@ class _AppControllerState extends State<AppController> {
                         controller: loginController,
                         decoration: const InputDecoration(labelText: "Login"),
                         onTap: () {
-                          !kIsWeb || !(Platform.isAndroid || Platform.isIOS) ?
-                          showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                    title: const Text("Login Dialog"),
-                                    content: SingleChildScrollView(
-                                      child: ListBody(children: [
-                                        TextField(
-                                          controller: loginController,
-                                          decoration: const InputDecoration(
-                                              labelText: "Login"),
-                                        ),
-                                        actions: <Widget>[
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text("Ok"))
-                                        ],
-                                      ))
-                              : Null;
+                          kIsWeb || !(Platform.isAndroid || Platform.isIOS)
+                              ? showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                        title: const Text("Login Dialog"),
+                                        content: SingleChildScrollView(
+                                          child: ListBody(children: [
+                                            TextField(
+                                              controller: loginController,
+                                              decoration: const InputDecoration(
+                                                  labelText: "Login"),
+                                            ),
+                                            VirtualKeyboard(
+                                                type: VirtualKeyboardType
+                                                    .Alphanumeric,
+                                                textController: loginController)
+                                          ]),
+
                         }),
                     TextField(
                       controller: passwordController,
