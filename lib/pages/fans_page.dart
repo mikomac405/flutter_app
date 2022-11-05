@@ -13,9 +13,9 @@ class FansPage extends StatefulWidget {
 
 class _FansPageState extends State<FansPage> {
   int _temperatureValue = farm.fan.maxTemp;
-  int _humidityValue = 50;
-  double _fanPowerValue = 20;
-
+  int _humidityValue = farm.fan.maxHumidity;
+  int _fanPowerValue = farm.fan.speed;
+  String _isPressed = "On";
   Widget portraitMode() {
     return Scaffold(
       body: Center(
@@ -27,21 +27,26 @@ class _FansPageState extends State<FansPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ElevatedButton(
-                    onPressed: () => connection.setConfig(
-                        'vent', 'on', _fanPowerValue.toString()),
-                    child: const Text(
-                      'On',
-                      style: TextStyle(fontSize: 72),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => connection.setConfig(
-                        'vent', 'off', _fanPowerValue.toString()),
-                    child: const Text(
-                      'Off',
-                      style: TextStyle(fontSize: 72),
-                    ),
-                  ),
+                      onPressed: () {
+                        if (_isPressed == "On") {
+                          setState(() {
+                            _isPressed = "Off";
+                          });
+
+                          connection.setConfig(
+                              'vent', 'on', _fanPowerValue.toString());
+                        } else {
+                          connection.setConfig(
+                              'vent', 'off', _fanPowerValue.toString());
+                          setState(() {
+                            _isPressed = "On";
+                          });
+                        }
+                      },
+                      child: Text(
+                        _isPressed,
+                        style: const TextStyle(fontSize: 52),
+                      )),
                 ]),
             Column(
               children: <Widget>[
@@ -53,19 +58,13 @@ class _FansPageState extends State<FansPage> {
                         "Power",
                         style: TextStyle(fontSize: 30),
                       ),
-                      SizedBox(
-                          width: 200,
-                          child: (Slider(
-                            min: 0.0,
-                            max: 100.0,
-                            thumbColor: Colors.black,
-                            value: _fanPowerValue,
-                            onChanged: (value) {
-                              setState(() {
-                                _fanPowerValue = value;
-                              });
-                            },
-                          ))),
+                      NumberPicker(
+                        value: _humidityValue,
+                        minValue: 0,
+                        maxValue: 100,
+                        onChanged: (value) =>
+                            setState(() => _temperatureValue = value),
+                      ),
                       Text(
                         _fanPowerValue.toInt().toString() + "%",
                         style: const TextStyle(fontSize: 30),
@@ -133,21 +132,26 @@ class _FansPageState extends State<FansPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ElevatedButton(
-                    onPressed: () => connection.setConfig(
-                        'vent', 'on', _fanPowerValue.toString()),
-                    child: const Text(
-                      'On',
-                      style: TextStyle(fontSize: 72),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => connection.setConfig(
-                        'vent', 'off', _fanPowerValue.toString()),
-                    child: const Text(
-                      'Off',
-                      style: TextStyle(fontSize: 72),
-                    ),
-                  ),
+                      onPressed: () {
+                        if (_isPressed == "On") {
+                          setState(() {
+                            _isPressed = "Off";
+                          });
+
+                          connection.setConfig(
+                              'vent', 'on', _fanPowerValue.toString());
+                        } else {
+                          connection.setConfig(
+                              'vent', 'off', _fanPowerValue.toString());
+                          setState(() {
+                            _isPressed = "On";
+                          });
+                        }
+                      },
+                      child: Text(
+                        _isPressed,
+                        style: const TextStyle(fontSize: 52),
+                      )),
                 ]),
             Column(
               children: <Widget>[
@@ -157,24 +161,21 @@ class _FansPageState extends State<FansPage> {
                     children: [
                       const Text(
                         "Power",
-                        style: TextStyle(fontSize: 30),
+                        style: TextStyle(fontSize: 30, height: 3.5),
                       ),
                       SizedBox(
-                          width: 500,
-                          child: (Slider(
-                            min: 0.0,
-                            max: 100.0,
-                            thumbColor: Colors.blueGrey,
-                            value: _fanPowerValue,
-                            onChanged: (value) {
-                              setState(() {
-                                _fanPowerValue = value;
-                              });
-                            },
-                          ))),
+                          child: FittedBox(
+                              fit: BoxFit.contain,
+                              child: NumberPicker(
+                                value: _fanPowerValue,
+                                minValue: 0,
+                                maxValue: 100,
+                                onChanged: (value) =>
+                                    setState(() => _fanPowerValue = value),
+                              ))),
                       Text(
                         _fanPowerValue.toInt().toString() + "%",
-                        style: const TextStyle(fontSize: 30),
+                        style: TextStyle(fontSize: 30, height: 3.5),
                       ),
                     ])
               ],
@@ -201,9 +202,11 @@ class _FansPageState extends State<FansPage> {
                     "%",
                     style: TextStyle(fontSize: 30, height: 3.5),
                   ),
-                  const SizedBox(
-                    width: 100,
-                  ),
+                ]),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   const Text(
                     "Temperature",
                     style: TextStyle(fontSize: 30, height: 3.5),

@@ -112,11 +112,19 @@ class _AppControllerState extends State<AppController> {
       default:
         if (connectionStatus == ConnectionStatus.restApi) {
           return Scaffold(
-            appBar: AppBar(title: const Text("Hydro"), actions: [
-              Image.asset(
-                "assets/images/farmIcon.png",
-              ),
-            ]),
+            appBar: AppBar(
+                title: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                  const Text("Hydro"),
+                  SizedBox(width: 10),
+                  Image.asset(
+                    "assets/images/farmIcon.png",
+                    scale: 5,
+                  ),
+                  SizedBox(width: 50)
+                ])),
             body: PageView(
               controller: _controller,
               children: const [
