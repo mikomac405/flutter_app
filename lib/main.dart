@@ -154,6 +154,25 @@ class _AppControllerState extends State<AppController> {
                         controller: loginController,
                         decoration: const InputDecoration(labelText: "Login"),
                         onTap: () {
+<<<<<<< HEAD
+                          kIsWeb || !(Platform.isAndroid || Platform.isIOS)
+                              ? showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                        title: const Text("Login Dialog"),
+                                        content: SingleChildScrollView(
+                                          child: ListBody(children: [
+                                            TextField(
+                                              controller: loginController,
+                                              decoration: const InputDecoration(
+                                                  labelText: "Login"),
+                                            ),
+                                            VirtualKeyboard(
+                                                type: VirtualKeyboardType
+                                                    .Alphanumeric,
+                                                textController: loginController)
+                                          ]),
+=======
                           !kIsWeb || !(Platform.isAndroid || Platform.isIOS) ?
                           showDialog(
                               context: context,
@@ -165,6 +184,7 @@ class _AppControllerState extends State<AppController> {
                                           controller: loginController,
                                           decoration: const InputDecoration(
                                               labelText: "Login"),
+>>>>>>> api-verification-and-data-downloading
                                         ),
                                         actions: <Widget>[
                                           TextButton(
@@ -177,6 +197,44 @@ class _AppControllerState extends State<AppController> {
                               : Null;
                         }),
                     TextField(
+<<<<<<< HEAD
+                        controller: passwordController,
+                        decoration:
+                            const InputDecoration(labelText: "Password"),
+                        onTap: () {
+                          kIsWeb || !(Platform.isAndroid || Platform.isIOS)
+                              ? showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                        title: const Text("Password Dialog"),
+                                        content: SingleChildScrollView(
+                                          child: ListBody(children: [
+                                            TextField(
+                                              controller: passwordController,
+                                              decoration: const InputDecoration(
+                                                  labelText: "Password"),
+                                            ),
+                                            VirtualKeyboard(
+                                                type: VirtualKeyboardType
+                                                    .Alphanumeric,
+                                                textController:
+                                                    passwordController)
+                                          ]),
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text("Ok"))
+                                        ],
+                                      ))
+                              : Null;
+                        }),
+                    // Container(
+                    //   margin: const EdgeInsets.all(5),
+                    // ),
+=======
                       controller: passwordController,
                       decoration: const InputDecoration(labelText: "Password"),
                       onTap: () {
@@ -209,6 +267,7 @@ class _AppControllerState extends State<AppController> {
                                   : Null;
                         }
                     ),
+>>>>>>> api-verification-and-data-downloading
                     const Divider(),
                     ElevatedButton(
                       onPressed: () async {
