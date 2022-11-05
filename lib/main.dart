@@ -81,7 +81,7 @@ class _AppControllerState extends State<AppController> {
   void initState() {
     super.initState();
     connection.addListener(_connectionChecker);
-    WidgetsBinding.instance.addPostFrameCallback((_) { 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _getCredentials();
     });
   }
@@ -154,7 +154,7 @@ class _AppControllerState extends State<AppController> {
                         controller: loginController,
                         decoration: const InputDecoration(labelText: "Login"),
                         onTap: () {
-                          kIsWeb || !(Platform.isAndroid || Platform.isIOS)
+                          !kIsWeb || !(Platform.isAndroid || Platform.isIOS)
                               ? showDialog(
                                   context: context,
                                   builder: (ctx) => AlertDialog(
@@ -171,41 +171,51 @@ class _AppControllerState extends State<AppController> {
                                                     .Alphanumeric,
                                                 textController: loginController)
                                           ]),
-
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text("Ok"))
+                                        ],
+                                      ))
+                              : Null;
                         }),
                     TextField(
-                      controller: passwordController,
-                      decoration: const InputDecoration(labelText: "Password"),
-                      onTap: () {
-                          !kIsWeb || !(Platform.isAndroid || Platform.isIOS) ?
-                          showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                    title: const Text("Password Dialog"),
-                                    content: SingleChildScrollView(
-                                      child: ListBody(children: [
-                                        TextField(
-                                          controller: passwordController,
-                                          decoration: const InputDecoration(
-                                              labelText: "Password"),
+                        controller: passwordController,
+                        decoration:
+                            const InputDecoration(labelText: "Password"),
+                        onTap: () {
+                          !kIsWeb || !(Platform.isAndroid || Platform.isIOS)
+                              ? showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                        title: const Text("Password Dialog"),
+                                        content: SingleChildScrollView(
+                                          child: ListBody(children: [
+                                            TextField(
+                                              controller: passwordController,
+                                              decoration: const InputDecoration(
+                                                  labelText: "Password"),
+                                            ),
+                                            VirtualKeyboard(
+                                                type: VirtualKeyboardType
+                                                    .Alphanumeric,
+                                                textController:
+                                                    passwordController)
+                                          ]),
                                         ),
-                                        VirtualKeyboard(
-                                            type: VirtualKeyboardType
-                                                .Alphanumeric,
-                                            textController: passwordController)
-                                      ]),
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text("Ok"))
-                                    ],
-                                  ))
-                                  : Null;
-                        }
-                    ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text("Ok"))
+                                        ],
+                                      ))
+                              : Null;
+                        }),
                     const Divider(),
                     ElevatedButton(
                       onPressed: () async {
@@ -231,12 +241,14 @@ class _AppControllerState extends State<AppController> {
                     const Divider(),
                     ElevatedButton(
                       onPressed: () async {
-                        var data = await connection.data.getDailyData("2020-10-15", "2020-10-18");
-                        for(var el in data){
+                        var data = await connection.data
+                            .getDailyData("2020-10-15", "2020-10-18");
+                        for (var el in data) {
                           print(el);
                         }
-                        var data2 = await connection.data.getHourlyData("2020-10-15 10:00:00", "2020-10-16 15:00:00");
-                        for(var el in data2){
+                        var data2 = await connection.data.getHourlyData(
+                            "2020-10-15 10:00:00", "2020-10-16 15:00:00");
+                        for (var el in data2) {
                           print(el);
                         }
                       },
