@@ -27,6 +27,7 @@ class _FansPageState extends State<FansPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ElevatedButton(
+<<<<<<< HEAD
                       onPressed: () {
                         if (_isPressed == "On") {
                           setState(() {
@@ -47,6 +48,23 @@ class _FansPageState extends State<FansPage> {
                         _isPressed,
                         style: const TextStyle(fontSize: 52),
                       )),
+=======
+                    onPressed: () => connection.data.setConfig(
+                        'vent', 'on', _fanPowerValue.toString()),
+                    child: const Text(
+                      'On',
+                      style: TextStyle(fontSize: 72),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => connection.data.setConfig(
+                        'vent', 'off', _fanPowerValue.toString()),
+                    child: const Text(
+                      'Off',
+                      style: TextStyle(fontSize: 72),
+                    ),
+                  ),
+>>>>>>> api-verification-and-data-downloading
                 ]),
             Column(
               children: <Widget>[
@@ -132,6 +150,7 @@ class _FansPageState extends State<FansPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ElevatedButton(
+<<<<<<< HEAD
                       onPressed: () {
                         if (_isPressed == "On") {
                           setState(() {
@@ -152,6 +171,23 @@ class _FansPageState extends State<FansPage> {
                         _isPressed,
                         style: const TextStyle(fontSize: 52),
                       )),
+=======
+                    onPressed: () => connection.data.setConfig(
+                        'vent', 'on', _fanPowerValue.toString()),
+                    child: const Text(
+                      'On',
+                      style: TextStyle(fontSize: 72),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => connection.data.setConfig(
+                        'vent', 'off', _fanPowerValue.toString()),
+                    child: const Text(
+                      'Off',
+                      style: TextStyle(fontSize: 72),
+                    ),
+                  ),
+>>>>>>> api-verification-and-data-downloading
                 ]),
             Column(
               children: <Widget>[
