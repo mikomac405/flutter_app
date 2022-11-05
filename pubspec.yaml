@@ -31,6 +31,7 @@ dependencies:
   dotenv: ^4.0.1
   http: ^0.13.4
   vk: ^0.2.1
+  shared_preferences: ^2.0.15
   flutter:
     sdk: flutter
 

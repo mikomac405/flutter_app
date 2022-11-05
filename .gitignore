@@ -52,7 +52,6 @@ app.*.map.json
 /android/app/release
 
 /web/
-.vscode/
 windows/
 deploy_debug.ps1
 android/

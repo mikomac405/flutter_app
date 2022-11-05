@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:inzynierka/data_mng.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'connection.dart';
 import 'pages/fans_page.dart';
 import 'pages/lights_page.dart';
@@ -24,7 +24,7 @@ void main() {
   });
 
   Timer.periodic(const Duration(seconds: 60), (timer) {
-    var status = connection.getComponentsStatus();
+    var status = connection.data.getComponentsStatus();
     status.then((value) => farm.update(jsonDecode(value)));
   });
 
@@ -75,6 +75,16 @@ class _AppControllerState extends State<AppController> {
   void initState() {
     super.initState();
     connection.addListener(_connectionChecker);
+    WidgetsBinding.instance.addPostFrameCallback((_) { 
+      _getCredentials();
+    });
+  }
+
+  _getCredentials() async {
+    // obtain shared preferences
+    final prefs = await SharedPreferences.getInstance();
+    loginController.text = prefs.getString('login') ?? "";
+    passwordController.text = prefs.getString('password') ?? "";
   }
 
   ///This function is responsible for setting states of app based on
@@ -128,7 +138,7 @@ class _AppControllerState extends State<AppController> {
                         controller: loginController,
                         decoration: const InputDecoration(labelText: "Login"),
                         onTap: () {
-                          kIsWeb || !(Platform.isAndroid || Platform.isIOS) ?
+                          !kIsWeb || !(Platform.isAndroid || Platform.isIOS) ?
                           showDialog(
                               context: context,
                               builder: (ctx) => AlertDialog(
@@ -160,7 +170,7 @@ class _AppControllerState extends State<AppController> {
                       controller: passwordController,
                       decoration: const InputDecoration(labelText: "Password"),
                       onTap: () {
-                          kIsWeb || !(Platform.isAndroid || Platform.isIOS) ?
+                          !kIsWeb || !(Platform.isAndroid || Platform.isIOS) ?
                           showDialog(
                               context: context,
                               builder: (ctx) => AlertDialog(
@@ -189,20 +199,21 @@ class _AppControllerState extends State<AppController> {
                                   : Null;
                         }
                     ),
-                    // Container(
-                    //   margin: const EdgeInsets.all(5),
-                    // ),
                     const Divider(),
                     ElevatedButton(
-                      onPressed: () {
-                        login = loginController.text;
-                        password = passwordController.text;
+                      onPressed: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        prefs.setString("login", loginController.text);
+                        prefs.setString("password", passwordController.text);
                       },
                       child: const Text('Save credentials'),
                     ),
                     const Divider(),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        String login = prefs.getString("login") ?? "";
+                        String password = prefs.getString("password") ?? "";
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(
                               "Login: " + login + "\nPassword: " + password),
@@ -213,56 +224,11 @@ class _AppControllerState extends State<AppController> {
                     const Divider(),
                     ElevatedButton(
                       onPressed: () async {
-                        var responseToken = await connection.getToken();
-                        switch (responseToken) {
-                          case "Username incorrect":
-                            {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text("Username incorrect"),
-                              ));
-                              break;
-                            }
-                          case "Password incorrect":
-                            {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text("Password incorrect"),
-                              ));
-                              break;
-                            }
-                          default:
-                            {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text("Got token!"),
-                              ));
-                              token = responseToken;
-                              break;
-                            }
-                        }
-                      },
-                      child: const Text('Get token'),
-                    ),
-                    const Divider(),
-                    ElevatedButton(
-                      onPressed: () async {
-                        var resp = await connection.testToken();
-
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(resp),
-                        ));
-                      },
-                      child: const Text('Test token'),
-                    ),
-                    const Divider(),
-                    ElevatedButton(
-                      onPressed: () async {
-                        var data = await getDailyData("2020-10-15", "2020-10-18");
+                        var data = await connection.data.getDailyData("2020-10-15", "2020-10-18");
                         for(var el in data){
                           print(el);
                         }
-                        var data2 = await getHourlyData("2020-10-15 10:00:00", "2020-10-16 15:00:00");
+                        var data2 = await connection.data.getHourlyData("2020-10-15 10:00:00", "2020-10-16 15:00:00");
                         for(var el in data2){
                           print(el);
                         }

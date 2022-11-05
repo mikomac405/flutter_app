@@ -27,7 +27,7 @@ class _FansPageState extends State<FansPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ElevatedButton(
-                    onPressed: () => connection.setConfig(
+                    onPressed: () => connection.data.setConfig(
                         'vent', 'on', _fanPowerValue.toString()),
                     child: const Text(
                       'On',
@@ -35,7 +35,7 @@ class _FansPageState extends State<FansPage> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () => connection.setConfig(
+                    onPressed: () => connection.data.setConfig(
                         'vent', 'off', _fanPowerValue.toString()),
                     child: const Text(
                       'Off',
@@ -133,7 +133,7 @@ class _FansPageState extends State<FansPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ElevatedButton(
-                    onPressed: () => connection.setConfig(
+                    onPressed: () => connection.data.setConfig(
                         'vent', 'on', _fanPowerValue.toString()),
                     child: const Text(
                       'On',
@@ -141,7 +141,7 @@ class _FansPageState extends State<FansPage> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () => connection.setConfig(
+                    onPressed: () => connection.data.setConfig(
                         'vent', 'off', _fanPowerValue.toString()),
                     child: const Text(
                       'Off',

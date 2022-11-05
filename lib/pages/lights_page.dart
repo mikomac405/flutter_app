@@ -68,14 +68,14 @@ class _LightsPageState extends State<LightsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ElevatedButton(
-                    onPressed: () => connection.setConfig("led", "on", ""),
+                    onPressed: () => connection.data.setConfig("led", "on", ""),
                     child: const Text(
                       'On',
                       style: TextStyle(fontSize: 72),
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () => connection.setConfig("led", "off", ""),
+                    onPressed: () => connection.data.setConfig("led", "off", ""),
                     child: const Text(
                       'Off',
                       style: TextStyle(fontSize: 72),

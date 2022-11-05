@@ -21,7 +21,7 @@ class _WifiFormState extends State<WifiForm> {
   late TextEditingController _controllerText;
 
   void getWifisList() async {
-    List<String> tempList = await connection.getWifiList();
+    List<String> tempList = await connection.wifi.getWifiList();
     setState(() {
       if (tempList.isNotEmpty) {
         ssids = tempList;
@@ -127,7 +127,7 @@ class _WifiFormState extends State<WifiForm> {
 
                       if (Platform.isLinux) {
                         // TODO: Add selected item to list!
-                        connection.connectToWifi(ssids.first, pass);
+                        connection.wifi.connectToWifi(ssids.first, pass);
                       } else if (Platform.isAndroid) {
                         List<BluetoothService> services =
                             await androidDevice.discoverServices();

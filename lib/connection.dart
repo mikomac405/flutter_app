@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:inzynierka/globals.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum ConnectionStatus {
   none,
@@ -17,20 +18,6 @@ enum ConnectionStatus {
 
 class ConnectionManager with ChangeNotifier {
   static final ConnectionManager _instance = ConnectionManager._internal();
-  ConnectionStatus _connectionStatus = ConnectionStatus.none;
-  static bool get _isOffline => const bool.hasEnvironment("OFFLINE")
-      ? const bool.fromEnvironment("OFFLINE")
-      : false;
-
-  String get baseUrl => const bool.hasEnvironment("IP")
-      ? const String.fromEnvironment("IP")
-      : "http://srv08.mikr.us:20364";
-
-  ConnectionStatus get connectionStatus => _connectionStatus;
-  set connectionStatus(ConnectionStatus newState) {
-    _connectionStatus = newState;
-    notifyListeners();
-  }
 
   factory ConnectionManager() {
     return _instance;
@@ -39,8 +26,25 @@ class ConnectionManager with ChangeNotifier {
   // Constructor
   ConnectionManager._internal() {
     checkConnectionStatus();
-    // ignore: avoid_print
-    print(connectionStatus);
+  }
+
+  WifiManager wifi = WifiManager();
+  DataManager data = DataManager();
+
+  ConnectionStatus _connectionStatus = ConnectionStatus.none;
+
+  static bool get _isOffline => const bool.hasEnvironment("OFFLINE")
+      ? const bool.fromEnvironment("OFFLINE")
+      : false;
+
+  String get _baseUrl => const bool.hasEnvironment("IP")
+      ? const String.fromEnvironment("IP")
+      : "http://srv08.mikr.us:20364";
+
+  ConnectionStatus get connectionStatus => _connectionStatus;
+  set connectionStatus(ConnectionStatus newState) {
+    _connectionStatus = newState;
+    notifyListeners();
   }
 
   /// Responsible for checking if app has
@@ -70,79 +74,12 @@ class ConnectionManager with ChangeNotifier {
     checkConnectionWithEsp().then((value) => {connectionStatus = value});
   }
 
-  Future<List<String>> getWifiList() async {
-    var result =
-        await Process.run('nmcli', ['-f', 'SSID', 'd', 'wifi', 'list']);
-    var list = result.stdout.split('\n');
-    return list.sublist(1, list.length - 2);
-  }
-
-  Future<void> connectToWifi(String ssid, String password) async {
-    await Process.run('nmcli',
-        ['d', 'wifi', 'connect', ssid.trim(), 'password', password.trim()]);
-    // TODO: Check when Hydro available
-    // connect.then((val) {
-    //   print(ssid);
-    //   print(password);
-    //   print(val.pid);
-    //   print(val.stdout);
-    //   print(val.stderr);
-    //   print(val.exitCode);
-    // });
-    checkConnectionStatus();
-  }
-
-  Future<String> getToken() async {
-    var url = Uri.parse("$baseUrl/auth");
-    Map jsonBody = {'username': login, 'password': password};
-    var jsonBodyEnocoded = json.encode(jsonBody);
-    var response = await http.post(url,
-        headers: {"Content-Type": "application/json"}, body: jsonBodyEnocoded);
-    if (kDebugMode) {
-      print(response.body);
-    }
-    return response.body;
-  }
-
-  Future<String> testToken() async {
-    var url = Uri.parse("$baseUrl/token/test");
-    var response =
-        await http.post(url, headers: {"Authorization": "Bearer $token"});
-    if (kDebugMode) {
-      print(response.body);
-    }
-    return response.body;
-  }
-
-  Future<String> getComponentsStatus() async {
-    var url = _isOffline
-        ? Uri.parse("$baseUrl/status/test")
-        : Uri.parse("$baseUrl/status");
-    var status = await http.get(url);
-    return status.body;
-  }
-
-  ///This function is responsible for sending commands to ESP
-  Future<void> setConfig(component, command, args) async {
-    if (_isOffline) {
-      return;
-    }
-    var url = Uri.parse("$baseUrl/config/" + component + "/set/");
-    Map jsonbody = {'command': command, 'args': args};
-    var jsonbody1 = json.encode(jsonbody);
-    var response = await http.post(url,
-        headers: {"Content-Type": "application/json"}, body: jsonbody1);
-    if (kDebugMode) {
-      print(response.body);
-    }
-  }
-
   ///This function is responsible for checking if connection with ESP is up
   // TODO: No internet check
   Future<ConnectionStatus> checkConnectionWithEsp() async {
     var url = _isOffline
-        ? Uri.parse('$baseUrl/heartbeat/test')
-        : Uri.parse('$baseUrl/heartbeat');
+        ? Uri.parse('$_baseUrl/heartbeat/test')
+        : Uri.parse('$_baseUrl/heartbeat');
     try {
       var response = await http.get(url);
       if (kDebugMode) {
@@ -157,6 +94,173 @@ class ConnectionManager with ChangeNotifier {
         print("error");
       }
       return ConnectionStatus.noRestApi;
+    }
+  }
+}
+
+class WifiManager {
+  static final WifiManager _instance = WifiManager._internal();
+
+  factory WifiManager() {
+    return _instance;
+  }
+
+  // Constructor
+  WifiManager._internal();
+
+  Future<List<String>> getWifiList() async {
+    var result =
+        await Process.run('nmcli', ['-f', 'SSID', 'd', 'wifi', 'list']);
+    var list = result.stdout.split('\n');
+    return list.sublist(1, list.length - 2);
+  }
+
+  Future<void> connectToWifi(String ssid, String password) async {
+    await Process.run('nmcli',
+        ['d', 'wifi', 'connect', ssid.trim(), 'password', password.trim()]);
+    connection.checkConnectionStatus();
+  }
+}
+
+class DataManager {
+  static final DataManager _instance = DataManager._internal();
+
+  factory DataManager() {
+    return _instance;
+  }
+
+  // Constructor
+  DataManager._internal();
+
+  Future<void> authUser() async {
+    // obtain shared preferences
+    final prefs = await SharedPreferences.getInstance();
+    String login = prefs.getString('login') ?? "";
+    String password = prefs.getString('password') ?? "";
+    if (login.isEmpty || password.isEmpty) {
+      return;
+    }
+    var url = Uri.parse("${connection._baseUrl}/auth");
+    Map jsonBody = {'username': login, 'password': password};
+    var jsonBodyEnocoded = json.encode(jsonBody);
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: jsonBodyEnocoded);
+    if (kDebugMode) {
+      print(response.body);
+    }
+    switch (response.body) {
+      case "Password incorrect":
+        print(response.body);
+        break;
+      case "Username incorrect":
+        print(response.body);
+        break;
+      default:
+        prefs.setString("token", response.body);
+    }
+  }
+
+  Future<void> testToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token") ?? "";
+    var url = Uri.parse("${connection._baseUrl}/token/test");
+    var response =
+        await http.post(url, headers: {"Authorization": "Bearer $token"});
+    if (kDebugMode) {
+      print(response.body);
+    }
+    switch (response.body) {
+      case "Token expired":
+        await authUser();
+        break;
+      case "Token missing":
+        await authUser();
+        break;
+      case "Inactive issuer":
+        print(response.body);
+        break;
+      case "Unverifiable issuer":
+        print(response.body);
+        break;
+      case "Invalid prefix":
+        print(response.body);
+        break;
+      case "Invalid token":
+        await authUser();
+        break;
+      default:
+        if(int.parse(response.body) < 60){
+          await authUser();
+        }
+        
+    }
+  }
+
+  Future<String> getComponentsStatus() async {
+    var url = ConnectionManager._isOffline
+        ? Uri.parse("${connection._baseUrl}/status/test")
+        : Uri.parse("${connection._baseUrl}/status");
+    var status = await http.get(url);
+    return status.body;
+  }
+
+  Future<dynamic> getDailyData(String startDate, String endDate) async {
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token") ?? "";
+    if (token.isEmpty) {
+      await authUser();
+    }
+
+    await testToken();
+
+    var url = Uri.parse("${connection._baseUrl}/data/by_date");
+    var jsonBodyEncoded = json.encode({"start": startDate, "end": endDate});
+
+    var response = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: jsonBodyEncoded);
+    return jsonDecode(response.body);
+  }
+
+  Future<dynamic> getHourlyData(
+      String startDateTime, String endDateTime) async {
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token") ?? "";
+    if (token.isEmpty) {
+      await authUser();
+    }
+
+    await testToken();
+
+    var url = Uri.parse("${connection._baseUrl}/data/by_datetime");
+    var jsonBodyEncoded =
+        json.encode({"start": startDateTime, "end": endDateTime});
+
+    var response = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: jsonBodyEncoded);
+
+    return jsonDecode(response.body);
+  }
+
+  ///This function is responsible for sending commands to ESP
+  Future<void> setConfig(component, command, args) async {
+    if (ConnectionManager._isOffline) {
+      return;
+    }
+    var url = Uri.parse("${connection._baseUrl}/config/" + component + "/set/");
+    Map jsonbody = {'command': command, 'args': args};
+    var jsonbody1 = json.encode(jsonbody);
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: jsonbody1);
+    if (kDebugMode) {
+      print(response.body);
     }
   }
 }
