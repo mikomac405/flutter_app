@@ -123,6 +123,7 @@ class WifiManager {
 }
 
 class DataManager {
+  
   static final DataManager _instance = DataManager._internal();
 
   factory DataManager() {
