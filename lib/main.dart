@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'connection.dart';
-import 'pages/fans_page.dart';
-import 'pages/lights_page.dart';
+import 'pages/fans_and_lights_page.dart';
+import 'pages/charts_page.dart';
 import 'pages/home_page.dart';
 import 'globals.dart';
 import 'package:vk/vk.dart';
@@ -138,9 +138,9 @@ class _AppControllerState extends State<AppController> {
             body: PageView(
               controller: _controller,
               children: const [
-                FansPage(title: "Fans"),
+                FansAndLightsPage(title: "Fans"),
                 HomePage(title: "Home"),
-                LightsPage(title: "Lights"),
+                ChartsPage(title: "Lights"),
               ],
             ),
             drawer: Drawer(

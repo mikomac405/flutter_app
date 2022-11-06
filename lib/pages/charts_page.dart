@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:inzynierka/globals.dart';
 
-class LightsPage extends StatefulWidget {
-  const LightsPage({Key? key, required this.title}) : super(key: key);
+class ChartsPage extends StatefulWidget {
+  const ChartsPage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  State<LightsPage> createState() => _LightsPageState();
+  State<ChartsPage> createState() => _ChartsPageState();
 }
 
-class _LightsPageState extends State<LightsPage> {
+class _ChartsPageState extends State<ChartsPage> {
   final controllerStart = TextEditingController();
   final controllerStop = TextEditingController();
 
@@ -75,7 +75,8 @@ class _LightsPageState extends State<LightsPage> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () => connection.data.setConfig("led", "off", ""),
+                    onPressed: () =>
+                        connection.data.setConfig("led", "off", ""),
                     child: const Text(
                       'Off',
                       style: TextStyle(fontSize: 72),
