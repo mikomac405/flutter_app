@@ -33,8 +33,8 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
   int _temperatureValue = farm.fan.maxTemp;
   int _humidityValue = farm.fan.maxHumidity;
   int _fanPowerValue = farm.fan.speed;
-  int _lightsStartMinutes = 0;
-  int _lightsStopMinutes = 0;
+  int _lightsStartMinutes = 30;
+  int _lightsStopMinutes = 30;
   RangeValues _currentRangeValues = const RangeValues(4, 12);
   String _isPressedLights = "ON";
   String _isPressedFans = "ON";
@@ -339,6 +339,7 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                               style: const TextStyle(fontSize: 30),
                             )),
                       ]),
+                  SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
