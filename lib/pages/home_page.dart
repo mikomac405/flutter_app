@@ -120,11 +120,10 @@ class _HomePageState extends State<HomePage> {
                             const Text("TEMPERATURE",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 20)),
-                            const SizedBox(height: 10),
                             Text("${farm.dht11.temperature}°C",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 100,
+                                    fontSize: 80,
                                     color: Colors.black)),
                           ])
                     ]),
@@ -136,11 +135,10 @@ class _HomePageState extends State<HomePage> {
                       const Text("HUMIDITY",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
-                      const SizedBox(height: 10),
                       Text("${farm.dht11.humidity}%",
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 100,
+                              fontSize: 80,
                               color: Colors.black)),
                     ])
               ])

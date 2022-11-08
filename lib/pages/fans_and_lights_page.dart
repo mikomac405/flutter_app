@@ -30,38 +30,14 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
     super.dispose();
   }
 
-  TimeOfDay _timeOn = const TimeOfDay(hour: 7, minute: 15);
-  TimeOfDay _timeOff = const TimeOfDay(hour: 18, minute: 15);
-
-  void _selectTimeOn() async {
-    final TimeOfDay? newTime = await showTimePicker(
-      context: context,
-      initialTime: _timeOn,
-    );
-    if (newTime != null) {
-      setState(() {
-        _timeOn = newTime;
-      });
-    }
-  }
-
-  void _selectTimeOff() async {
-    final TimeOfDay? newTime = await showTimePicker(
-      context: context,
-      initialTime: _timeOff,
-    );
-    if (newTime != null) {
-      setState(() {
-        _timeOff = newTime;
-      });
-    }
-  }
-
   int _temperatureValue = farm.fan.maxTemp;
   int _humidityValue = farm.fan.maxHumidity;
   int _fanPowerValue = farm.fan.speed;
-  String _isPressedLights = "On";
-  String _isPressedFans = "On";
+  int _lightsStartMinutes = 0;
+  int _lightsStopMinutes = 0;
+  RangeValues _currentRangeValues = const RangeValues(4, 12);
+  String _isPressedLights = "ON";
+  String _isPressedFans = "ON";
   Widget portraitMode() {
     return Scaffold(
       body: Center(
@@ -69,92 +45,87 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const Text(
+                    "LIGHTS",
+                    style: TextStyle(fontSize: 30),
+                  ),
                   ElevatedButton(
                       onPressed: () {
-                        if (_isPressedLights == "On") {
+                        if (_isPressedLights == "ON") {
                           setState(() {
-                            _isPressedLights = "Off";
+                            _isPressedLights = "OFF";
                           });
                           connection.data.setConfig("led", "on", "");
                         } else {
                           connection.data.setConfig("led", "off", "");
                           setState(() {
-                            _isPressedLights = "On";
+                            _isPressedLights = "ON";
                           });
                         }
                       },
                       child: Text(
                         _isPressedLights,
-                        style: const TextStyle(fontSize: 52),
+                        style: const TextStyle(fontSize: 30),
                       )),
                 ]),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 Column(
-                  children: <Widget>[
-                    SizedBox(
-                        width: 100,
-                        child: TextField(
-                          controller: controllerStart,
-                        )),
-                    ElevatedButton(
-                      onPressed: _selectTimeOn,
-                      child: const Text('Set time on'),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Selected time: ${_timeOn.format(context)}',
-                    )
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    SizedBox(
-                        width: 100,
-                        child: TextField(
-                          controller: controllerStop,
-                        )),
-                    ElevatedButton(
-                      onPressed: _selectTimeOff,
-                      child: const Text('Set time off'),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Selected time: ${_timeOff.format(context)}',
-                    )
+                  children: [
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Text(_currentRangeValues.start.round().toString()),
+                      const Text(":"),
+                      Text("$_lightsStartMinutes"),
+                      SizedBox(width: 20),
+                      Text(_currentRangeValues.end.round().toString()),
+                      const Text(":"),
+                      Text("$_lightsStopMinutes")
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Text("Hours"),
+                      Container(
+                          width: 300,
+                          child: RangeSlider(
+                            values: _currentRangeValues,
+                            max: 23,
+                            divisions: 23,
+                            onChanged: (RangeValues values) {
+                              setState(() {
+                                _currentRangeValues = values;
+                              });
+                            },
+                          ))
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Text("Minutes start"),
+                      NumberPicker(
+                        itemHeight: 25,
+                        itemWidth: 50,
+                        value: _lightsStartMinutes,
+                        minValue: 0,
+                        maxValue: 59,
+                        onChanged: (value) =>
+                            setState(() => _lightsStartMinutes = value),
+                      ),
+                      Text("Minutes ends"),
+                      NumberPicker(
+                        itemHeight: 25,
+                        itemWidth: 50,
+                        value: _lightsStopMinutes,
+                        minValue: 0,
+                        maxValue: 59,
+                        onChanged: (value) =>
+                            setState(() => _lightsStopMinutes = value),
+                      )
+                    ])
                   ],
                 ),
               ],
             ),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ElevatedButton(
-                      onPressed: () {
-                        if (_isPressedFans == "On") {
-                          setState(() {
-                            _isPressedFans = "Off";
-                          });
-                          connection.data.setConfig(
-                              'vent', 'on', _fanPowerValue.toString());
-                        } else {
-                          connection.data.setConfig(
-                              'vent', 'off', _fanPowerValue.toString());
-                          setState(() {
-                            _isPressedFans = "On";
-                          });
-                        }
-                      },
-                      child: Text(
-                        _isPressedFans,
-                        style: const TextStyle(fontSize: 52),
-                      )),
-                ]),
             Column(
               children: <Widget>[
                 Row(
@@ -162,25 +133,30 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text(
-                        "Power",
-                        style: TextStyle(fontSize: 20, height: 1),
+                        "FANS",
+                        style: TextStyle(fontSize: 30),
                       ),
-                      SizedBox(
-                          height: 100,
-                          width: 75,
-                          child: FittedBox(
-                              fit: BoxFit.contain,
-                              child: NumberPicker(
-                                value: _fanPowerValue,
-                                minValue: 0,
-                                maxValue: 100,
-                                onChanged: (value) =>
-                                    setState(() => _fanPowerValue = value),
-                              ))),
-                      const Text(
-                        "%",
-                        style: TextStyle(fontSize: 20, height: 1),
-                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            if (_isPressedFans == "ON") {
+                              setState(() {
+                                _isPressedFans = "OFF";
+                              });
+
+                              connection.data.setConfig(
+                                  'vent', 'on', _fanPowerValue.toString());
+                            } else {
+                              connection.data.setConfig(
+                                  'vent', 'off', _fanPowerValue.toString());
+                              setState(() {
+                                _isPressedFans = "ON";
+                              });
+                            }
+                          },
+                          child: Text(
+                            _isPressedFans,
+                            style: const TextStyle(fontSize: 30),
+                          )),
                     ])
               ],
             ),
@@ -192,18 +168,15 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                     "Humidity",
                     style: TextStyle(fontSize: 20, height: 1),
                   ),
-                  SizedBox(
-                      height: 100,
-                      width: 75,
-                      child: FittedBox(
-                          fit: BoxFit.contain,
-                          child: NumberPicker(
-                            value: _humidityValue,
-                            minValue: 0,
-                            maxValue: 100,
-                            onChanged: (value) =>
-                                setState(() => _humidityValue = value),
-                          ))),
+                  NumberPicker(
+                    itemHeight: 25,
+                    itemWidth: 50,
+                    value: _humidityValue,
+                    minValue: 0,
+                    maxValue: 100,
+                    onChanged: (value) =>
+                        setState(() => _humidityValue = value),
+                  ),
                   const Text(
                     "%",
                     style: TextStyle(fontSize: 20, height: 1),
@@ -217,18 +190,15 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                     "Temperature",
                     style: TextStyle(fontSize: 20, height: 1),
                   ),
-                  SizedBox(
-                      height: 100,
-                      width: 75,
-                      child: FittedBox(
-                          fit: BoxFit.contain,
-                          child: NumberPicker(
-                            value: _temperatureValue,
-                            minValue: 0,
-                            maxValue: 100,
-                            onChanged: (value) =>
-                                setState(() => _temperatureValue = value),
-                          ))),
+                  NumberPicker(
+                    itemHeight: 25,
+                    itemWidth: 50,
+                    value: _temperatureValue,
+                    minValue: 0,
+                    maxValue: 100,
+                    onChanged: (value) =>
+                        setState(() => _temperatureValue = value),
+                  ),
                   const Text(
                     "°C",
                     style: TextStyle(fontSize: 20, height: 1),
@@ -257,57 +227,37 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Column(
+                            Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
+                                  SizedBox(width: 20),
                                   const Text(
                                     "FANS",
-                                    style: TextStyle(fontSize: 30, height: 3),
+                                    style: TextStyle(fontSize: 30),
                                   ),
+                                  SizedBox(width: 10),
                                   ElevatedButton(
                                       onPressed: () {
-                                        if (_isPressedFans == "On") {
+                                        if (_isPressedFans == "ON") {
                                           setState(() {
-                                            _isPressedFans = "Off";
+                                            _isPressedFans = "OFF";
                                           });
-
                                           connection.data.setConfig('vent',
                                               'on', _fanPowerValue.toString());
                                         } else {
                                           connection.data.setConfig('vent',
                                               'off', _fanPowerValue.toString());
                                           setState(() {
-                                            _isPressedFans = "On";
+                                            _isPressedFans = "ON";
                                           });
                                         }
                                       },
                                       child: Text(
                                         _isPressedFans,
-                                        style: const TextStyle(fontSize: 52),
+                                        style: const TextStyle(fontSize: 30),
                                       ))
                                 ]),
-                            SizedBox(width: 40),
-                            const Text(
-                              "Power",
-                              style: TextStyle(fontSize: 30, height: 1),
-                            ),
-                            SizedBox(
-                                height: 150,
-                                width: 100,
-                                child: FittedBox(
-                                    fit: BoxFit.contain,
-                                    child: NumberPicker(
-                                      value: _fanPowerValue,
-                                      minValue: 0,
-                                      maxValue: 100,
-                                      onChanged: (value) => setState(
-                                          () => _fanPowerValue = value),
-                                    ))),
-                            const Text(
-                              "%",
-                              style: TextStyle(fontSize: 30, height: 1),
-                            ),
                           ])
                     ],
                   ),
@@ -315,23 +265,19 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(width: 100),
                         const Text(
                           "Humidity",
                           style: TextStyle(fontSize: 30, height: 1),
                         ),
-                        SizedBox(
-                            height: 150,
-                            width: 100,
-                            child: FittedBox(
-                                fit: BoxFit.contain,
-                                child: NumberPicker(
-                                  value: _humidityValue,
-                                  minValue: 0,
-                                  maxValue: 100,
-                                  onChanged: (value) =>
-                                      setState(() => _humidityValue = value),
-                                ))),
+                        NumberPicker(
+                          itemHeight: 25,
+                          itemWidth: 50,
+                          value: _humidityValue,
+                          minValue: 0,
+                          maxValue: 100,
+                          onChanged: (value) =>
+                              setState(() => _humidityValue = value),
+                        ),
                         const Text(
                           "%",
                           style: TextStyle(fontSize: 30, height: 1),
@@ -341,27 +287,24 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(width: 60),
                         const Text(
                           "Temperature",
                           style: TextStyle(fontSize: 30, height: 1),
                         ),
-                        SizedBox(
-                            height: 150,
-                            width: 100,
-                            child: FittedBox(
-                                fit: BoxFit.contain,
-                                child: NumberPicker(
-                                  value: _temperatureValue,
-                                  minValue: 0,
-                                  maxValue: 100,
-                                  onChanged: (value) =>
-                                      setState(() => _temperatureValue = value),
-                                ))),
+                        NumberPicker(
+                          itemHeight: 25,
+                          itemWidth: 50,
+                          value: _temperatureValue,
+                          minValue: 0,
+                          maxValue: 100,
+                          onChanged: (value) =>
+                              setState(() => _temperatureValue = value),
+                        ),
                         const Text(
                           "°C",
                           style: TextStyle(fontSize: 30, height: 1),
-                        )
+                        ),
+                        SizedBox(width: 40),
                       ])
                 ]),
             Column(
@@ -372,60 +315,90 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        const Text(
+                          "LIGHTS",
+                          style: TextStyle(fontSize: 30),
+                        ),
+                        SizedBox(width: 10),
                         ElevatedButton(
                             onPressed: () {
-                              if (_isPressedLights == "On") {
+                              if (_isPressedLights == "ON") {
                                 setState(() {
-                                  _isPressedLights = "Off";
+                                  _isPressedLights = "OFF";
                                 });
                                 connection.data.setConfig("led", "on", "");
                               } else {
                                 connection.data.setConfig("led", "off", "");
                                 setState(() {
-                                  _isPressedLights = "On";
+                                  _isPressedLights = "ON";
                                 });
                               }
                             },
                             child: Text(
                               _isPressedLights,
-                              style: const TextStyle(fontSize: 52),
+                              style: const TextStyle(fontSize: 30),
                             )),
                       ]),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+                    children: [
                       Column(
-                        children: <Widget>[
-                          SizedBox(
-                              width: 100,
-                              child: TextField(
-                                controller: controllerStart,
-                              )),
-                          ElevatedButton(
-                            onPressed: _selectTimeOn,
-                            child: const Text('Set time on'),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Selected time: ${_timeOn.format(context)}',
-                          )
-                        ],
-                      ),
-                      Column(
-                        children: <Widget>[
-                          SizedBox(
-                              width: 100,
-                              child: TextField(
-                                controller: controllerStop,
-                              )),
-                          ElevatedButton(
-                            onPressed: _selectTimeOff,
-                            child: const Text('Set time off'),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Selected time: ${_timeOff.format(context)}',
-                          )
+                        children: [
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(_currentRangeValues.start
+                                    .round()
+                                    .toString()),
+                                const Text(":"),
+                                Text("$_lightsStartMinutes"),
+                                SizedBox(width: 20),
+                                Text(
+                                    _currentRangeValues.end.round().toString()),
+                                const Text(":"),
+                                Text("$_lightsStopMinutes")
+                              ]),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Hours"),
+                                Container(
+                                    width: 300,
+                                    child: RangeSlider(
+                                      values: _currentRangeValues,
+                                      max: 23,
+                                      divisions: 23,
+                                      onChanged: (RangeValues values) {
+                                        setState(() {
+                                          _currentRangeValues = values;
+                                        });
+                                      },
+                                    ))
+                              ]),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Minutes start"),
+                                NumberPicker(
+                                  itemHeight: 25,
+                                  itemWidth: 50,
+                                  value: _lightsStartMinutes,
+                                  minValue: 0,
+                                  maxValue: 59,
+                                  onChanged: (value) => setState(
+                                      () => _lightsStartMinutes = value),
+                                ),
+                                Text("Minutes ends"),
+                                NumberPicker(
+                                  itemHeight: 25,
+                                  itemWidth: 50,
+                                  value: _lightsStopMinutes,
+                                  minValue: 0,
+                                  maxValue: 59,
+                                  onChanged: (value) => setState(
+                                      () => _lightsStopMinutes = value),
+                                )
+                              ])
                         ],
                       ),
                     ],
