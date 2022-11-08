@@ -59,3 +59,4 @@ android/
 /.dart_tool
 /linux
 /macos
+debug_deploy.ps1
