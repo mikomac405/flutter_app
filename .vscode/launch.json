@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "flutter_app_dev",
+            "name": "flutter_app_dev_no_esp32",
             "request": "launch",
             "type": "dart",
             "toolArgs": [
@@ -14,7 +14,20 @@
                 "--dart-define",
                 "OFFLINE=true",
                 "--dart-define",
-                "IP=http://localhost:8000"
+                "IP=http://192.168.0.14:8000"
+            ]
+        },
+        {
+            "name": "flutter_app_dev",
+            "request": "launch",
+            "type": "dart",
+            "toolArgs": [
+                "--dart-define",
+                "DEV=true",
+                "--dart-define",
+                "OFFLINE=false",
+                "--dart-define",
+                "IP=http://192.168.0.14:8000"
             ]
         },
         {
