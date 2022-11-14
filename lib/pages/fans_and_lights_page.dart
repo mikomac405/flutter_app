@@ -32,10 +32,8 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
 
   int _temperatureValue = farm.fan.maxTemp;
   int _humidityValue = farm.fan.maxHumidity;
-  int _fanPowerValue = farm.fan.speed;
-  int _lightsStartHours = 9;
+  int _fanPowerValue = farm.fan.status;
   int _lightsStartMinutes = 30;
-  int _lightsStopHours = 18;
   int _lightsStopMinutes = 30;
   RangeValues _currentRangeValues = const RangeValues(4, 12);
   String _isPressedLights = "ON";
@@ -46,6 +44,88 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "LIGHTS",
+                    style: TextStyle(fontSize: 30),
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        if (_isPressedLights == "ON") {
+                          setState(() {
+                            _isPressedLights = "OFF";
+                          });
+                          connection.data.setConfig("led", "on", "");
+                        } else {
+                          connection.data.setConfig("led", "off", "");
+                          setState(() {
+                            _isPressedLights = "ON";
+                          });
+                        }
+                      },
+                      child: Text(
+                        _isPressedLights,
+                        style: const TextStyle(fontSize: 30),
+                      )),
+                ]),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Text(_currentRangeValues.start.round().toString()),
+                      const Text(":"),
+                      Text("$_lightsStartMinutes"),
+                      SizedBox(width: 20),
+                      Text(_currentRangeValues.end.round().toString()),
+                      const Text(":"),
+                      Text("$_lightsStopMinutes")
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Text("Hours"),
+                      Container(
+                          width: 300,
+                          child: RangeSlider(
+                            values: _currentRangeValues,
+                            max: 23,
+                            divisions: 23,
+                            onChanged: (RangeValues values) {
+                              setState(() {
+                                _currentRangeValues = values;
+                              });
+                            },
+                          ))
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Text("Minutes start"),
+                      NumberPicker(
+                        itemHeight: 25,
+                        itemWidth: 50,
+                        value: _lightsStartMinutes,
+                        minValue: 0,
+                        maxValue: 59,
+                        onChanged: (value) =>
+                            setState(() => _lightsStartMinutes = value),
+                      ),
+                      Text("Minutes ends"),
+                      NumberPicker(
+                        itemHeight: 25,
+                        itemWidth: 50,
+                        value: _lightsStopMinutes,
+                        minValue: 0,
+                        maxValue: 59,
+                        onChanged: (value) =>
+                            setState(() => _lightsStopMinutes = value),
+                      )
+                    ])
+                  ],
+                ),
+              ],
+            ),
             Column(
               children: <Widget>[
                 Row(
@@ -56,7 +136,6 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                         "FANS",
                         style: TextStyle(fontSize: 30),
                       ),
-                      const SizedBox(width: 10),
                       ElevatedButton(
                           onPressed: () {
                             if (_isPressedFans == "ON") {
@@ -65,10 +144,10 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                               });
 
                               connection.data.setConfig(
-                                  'vent', 'on', _fanPowerValue.toString());
+                                  'fan', 'on', "");
                             } else {
                               connection.data.setConfig(
-                                  'vent', 'off', _fanPowerValue.toString());
+                                  'fan', 'off', "");
                               setState(() {
                                 _isPressedFans = "ON";
                               });
@@ -81,7 +160,6 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                     ])
               ],
             ),
-            const SizedBox(height: 10),
             Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -96,8 +174,6 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                     value: _humidityValue,
                     minValue: 0,
                     maxValue: 100,
-                    selectedTextStyle:
-                        const TextStyle(fontSize: 20, color: Colors.black),
                     onChanged: (value) =>
                         setState(() => _humidityValue = value),
                   ),
@@ -106,7 +182,6 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                     style: TextStyle(fontSize: 20, height: 1),
                   ),
                 ]),
-            const SizedBox(height: 10),
             Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -121,8 +196,6 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                     value: _temperatureValue,
                     minValue: 0,
                     maxValue: 100,
-                    selectedTextStyle:
-                        const TextStyle(fontSize: 20, color: Colors.black),
                     onChanged: (value) =>
                         setState(() => _temperatureValue = value),
                   ),
@@ -131,99 +204,6 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                     style: TextStyle(fontSize: 20, height: 1),
                   )
                 ]),
-            const SizedBox(height: 100),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Text(
-                "LIGHTS",
-                style: TextStyle(fontSize: 30),
-              ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                  onPressed: () {
-                    if (_isPressedLights == "ON") {
-                      setState(() {
-                        _isPressedLights = "OFF";
-                      });
-                      connection.data.setConfig("led", "on", "");
-                    } else {
-                      connection.data.setConfig("led", "off", "");
-                      setState(() {
-                        _isPressedLights = "ON";
-                      });
-                    }
-                  },
-                  child: Text(
-                    _isPressedLights,
-                    style: const TextStyle(fontSize: 30),
-                  )),
-            ]),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    Row(children: [
-                      const Text("Start",
-                          style: TextStyle(fontSize: 20, height: 1)),
-                      NumberPicker(
-                        itemHeight: 25,
-                        itemWidth: 40,
-                        value: _lightsStartHours,
-                        minValue: 0,
-                        maxValue: 23,
-                        selectedTextStyle:
-                            const TextStyle(fontSize: 20, color: Colors.black),
-                        onChanged: (value) =>
-                            setState(() => _lightsStartHours = value),
-                      ),
-                      const Text(":",
-                          style: TextStyle(fontSize: 20, height: 1)),
-                      NumberPicker(
-                        itemHeight: 25,
-                        itemWidth: 40,
-                        value: _lightsStartMinutes,
-                        minValue: 0,
-                        maxValue: 59,
-                        selectedTextStyle:
-                            const TextStyle(fontSize: 20, color: Colors.black),
-                        onChanged: (value) =>
-                            setState(() => _lightsStartMinutes = value),
-                      ),
-                      const SizedBox(width: 20),
-                    ]),
-                    Row(children: [
-                      const Text("Stop",
-                          style: TextStyle(fontSize: 20, height: 1)),
-                      NumberPicker(
-                        itemHeight: 25,
-                        itemWidth: 40,
-                        value: _lightsStopHours,
-                        minValue: 0,
-                        maxValue: 23,
-                        selectedTextStyle:
-                            const TextStyle(fontSize: 20, color: Colors.black),
-                        onChanged: (value) =>
-                            setState(() => _lightsStopHours = value),
-                      ),
-                      const Text(":",
-                          style: TextStyle(fontSize: 20, height: 1)),
-                      NumberPicker(
-                        itemHeight: 25,
-                        itemWidth: 40,
-                        value: _lightsStopMinutes,
-                        minValue: 0,
-                        maxValue: 59,
-                        selectedTextStyle:
-                            const TextStyle(fontSize: 20, color: Colors.black),
-                        onChanged: (value) =>
-                            setState(() => _lightsStopMinutes = value),
-                      )
-                    ])
-                  ],
-                ),
-              ],
-            ),
           ],
         ),
       ),
@@ -251,12 +231,12 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  const SizedBox(width: 20),
+                                  SizedBox(width: 20),
                                   const Text(
                                     "FANS",
                                     style: TextStyle(fontSize: 30),
                                   ),
-                                  const SizedBox(width: 10),
+                                  SizedBox(width: 10),
                                   ElevatedButton(
                                       onPressed: () {
                                         if (_isPressedFans == "ON") {
@@ -295,8 +275,6 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                           value: _humidityValue,
                           minValue: 0,
                           maxValue: 100,
-                          selectedTextStyle: const TextStyle(
-                              fontSize: 25, color: Colors.black),
                           onChanged: (value) =>
                               setState(() => _humidityValue = value),
                         ),
@@ -319,8 +297,6 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                           value: _temperatureValue,
                           minValue: 0,
                           maxValue: 100,
-                          selectedTextStyle: const TextStyle(
-                              fontSize: 25, color: Colors.black),
                           onChanged: (value) =>
                               setState(() => _temperatureValue = value),
                         ),
@@ -328,7 +304,7 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                           "°C",
                           style: TextStyle(fontSize: 30, height: 1),
                         ),
-                        const SizedBox(width: 40),
+                        SizedBox(width: 40),
                       ])
                 ]),
             Column(
@@ -343,7 +319,7 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                           "LIGHTS",
                           style: TextStyle(fontSize: 30),
                         ),
-                        const SizedBox(width: 10),
+                        SizedBox(width: 10),
                         ElevatedButton(
                             onPressed: () {
                               if (_isPressedLights == "ON") {
@@ -363,67 +339,67 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                               style: const TextStyle(fontSize: 30),
                             )),
                       ]),
+                  SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Column(
                         children: [
-                          Row(children: [
-                            const Text("Start",
-                                style: TextStyle(fontSize: 25, height: 1)),
-                            NumberPicker(
-                              itemHeight: 25,
-                              itemWidth: 40,
-                              value: _lightsStartHours,
-                              minValue: 0,
-                              maxValue: 23,
-                              selectedTextStyle: const TextStyle(
-                                  fontSize: 25, color: Colors.black),
-                              onChanged: (value) =>
-                                  setState(() => _lightsStartHours = value),
-                            ),
-                            const Text(":",
-                                style: TextStyle(fontSize: 25, height: 1)),
-                            NumberPicker(
-                              itemHeight: 25,
-                              itemWidth: 40,
-                              value: _lightsStartMinutes,
-                              minValue: 0,
-                              maxValue: 59,
-                              selectedTextStyle: const TextStyle(
-                                  fontSize: 25, color: Colors.black),
-                              onChanged: (value) =>
-                                  setState(() => _lightsStartMinutes = value),
-                            ),
-                          ]),
-                          Row(children: [
-                            const Text("Stop",
-                                style: TextStyle(fontSize: 25, height: 1)),
-                            NumberPicker(
-                              itemHeight: 25,
-                              itemWidth: 40,
-                              value: _lightsStopHours,
-                              minValue: 0,
-                              maxValue: 23,
-                              selectedTextStyle: const TextStyle(
-                                  fontSize: 25, color: Colors.black),
-                              onChanged: (value) =>
-                                  setState(() => _lightsStopHours = value),
-                            ),
-                            const Text(":",
-                                style: TextStyle(fontSize: 25, height: 1)),
-                            NumberPicker(
-                              itemHeight: 25,
-                              itemWidth: 40,
-                              value: _lightsStopMinutes,
-                              minValue: 0,
-                              maxValue: 59,
-                              selectedTextStyle: const TextStyle(
-                                  fontSize: 25, color: Colors.black),
-                              onChanged: (value) =>
-                                  setState(() => _lightsStopMinutes = value),
-                            )
-                          ])
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(_currentRangeValues.start
+                                    .round()
+                                    .toString()),
+                                const Text(":"),
+                                Text("$_lightsStartMinutes"),
+                                SizedBox(width: 20),
+                                Text(
+                                    _currentRangeValues.end.round().toString()),
+                                const Text(":"),
+                                Text("$_lightsStopMinutes")
+                              ]),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Hours"),
+                                Container(
+                                    width: 300,
+                                    child: RangeSlider(
+                                      values: _currentRangeValues,
+                                      max: 23,
+                                      divisions: 23,
+                                      onChanged: (RangeValues values) {
+                                        setState(() {
+                                          _currentRangeValues = values;
+                                        });
+                                      },
+                                    ))
+                              ]),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Minutes start"),
+                                NumberPicker(
+                                  itemHeight: 25,
+                                  itemWidth: 50,
+                                  value: _lightsStartMinutes,
+                                  minValue: 0,
+                                  maxValue: 59,
+                                  onChanged: (value) => setState(
+                                      () => _lightsStartMinutes = value),
+                                ),
+                                Text("Minutes ends"),
+                                NumberPicker(
+                                  itemHeight: 25,
+                                  itemWidth: 50,
+                                  value: _lightsStopMinutes,
+                                  minValue: 0,
+                                  maxValue: 59,
+                                  onChanged: (value) => setState(
+                                      () => _lightsStopMinutes = value),
+                                )
+                              ])
                         ],
                       ),
                     ],
