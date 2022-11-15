@@ -32,7 +32,7 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
 
   int _temperatureValue = farm.fan.maxTemp;
   int _humidityValue = farm.fan.maxHumidity;
-  int _fanPowerValue = farm.fan.speed;
+  int _fanPowerStatus = farm.fan.status;
   int _lightsStartHours = 9;
   int _lightsStartMinutes = 30;
   int _lightsStopHours = 18;
@@ -65,10 +65,10 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                               });
 
                               connection.data.setConfig(
-                                  'vent', 'on', _fanPowerValue.toString());
+                                  'fan', 'stop', '');
                             } else {
                               connection.data.setConfig(
-                                  'vent', 'off', _fanPowerValue.toString());
+                                  'fan', 'start', '');
                               setState(() {
                                 _isPressedFans = "ON";
                               });
@@ -264,10 +264,10 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                                             _isPressedFans = "OFF";
                                           });
                                           connection.data.setConfig('vent',
-                                              'on', _fanPowerValue.toString());
+                                              'on', _fanPowerStatus.toString());
                                         } else {
                                           connection.data.setConfig('vent',
-                                              'off', _fanPowerValue.toString());
+                                              'off', _fanPowerStatus.toString());
                                           setState(() {
                                             _isPressedFans = "ON";
                                           });

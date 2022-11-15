@@ -19,11 +19,11 @@ import '../globals.dart';
 
 void main() {
   connection = ConnectionManager();
-  Timer.periodic(const Duration(seconds: 20), (timer) {
+  Timer.periodic(const Duration(seconds: 10), (timer) {
     connection.checkConnectionStatus();
   });
 
-  Timer.periodic(const Duration(seconds: 60), (timer) {
+  Timer.periodic(const Duration(seconds: 30), (timer) {
     var status = connection.data.getComponentsStatus();
     status.then((value) => farm.update(jsonDecode(value)));
   });
@@ -220,8 +220,8 @@ class _AppControllerState extends State<AppController> {
                     ElevatedButton(
                       onPressed: () async {
                         final prefs = await SharedPreferences.getInstance();
-                        prefs.setString("login", loginController.text);
-                        prefs.setString("password", passwordController.text);
+                        prefs.setString("login", loginController.text.replaceAll("\n", "").replaceAll(" ", ""));
+                        prefs.setString("password", passwordController.text.replaceAll("\n", "").replaceAll(" ", ""));
                       },
                       child: const Text('Save credentials'),
                     ),
@@ -246,11 +246,11 @@ class _AppControllerState extends State<AppController> {
                         for (var el in data) {
                           print(el);
                         }
-                        var data2 = await connection.data.getHourlyData(
-                            "2020-10-15 10:00:00", "2020-10-16 15:00:00");
-                        for (var el in data2) {
-                          print(el);
-                        }
+                        // var data2 = await connection.data.getHourlyData(
+                        //     "2020-10-15 10:00:00", "2020-10-16 15:00:00");
+                        // for (var el in data2) {
+                        //   print(el);
+                        // }
                       },
                       child: const Text('Test data by day'),
                     ),

@@ -198,10 +198,23 @@ class DataManager {
   }
 
   Future<String> getComponentsStatus() async {
-    var url = ConnectionManager._isOffline
-        ? Uri.parse("${connection._baseUrl}/status/test")
-        : Uri.parse("${connection._baseUrl}/status");
-    var status = await http.get(url);
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token") ?? "";
+    if (token.isEmpty) {
+      print("Empty token");
+      await authUser();
+    }
+
+    if(ConnectionManager._isOffline){
+      var url = Uri.parse("${connection._baseUrl}/status/test");
+      var status = await http.get(url);
+      return status.body;
+    } 
+    var url = Uri.parse("${connection._baseUrl}/status/");
+    var status = await http.get(url, headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        });
     return status.body;
   }
 
@@ -255,11 +268,20 @@ class DataManager {
     if (ConnectionManager._isOffline) {
       return;
     }
+
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token") ?? "";
+    if (token.isEmpty) {
+      await authUser();
+    }
+
+    await testToken();
+
     var url = Uri.parse("${connection._baseUrl}/config/" + component + "/set/");
     Map jsonbody = {'command': command, 'args': args};
     var jsonbody1 = json.encode(jsonbody);
     var response = await http.post(url,
-        headers: {"Content-Type": "application/json"}, body: jsonbody1);
+        headers: {"Content-Type": "application/json", "Authorization": "Bearer $token"}, body: jsonbody1);
     if (kDebugMode) {
       print(response.body);
     }
