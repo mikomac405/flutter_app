@@ -80,12 +80,12 @@ class DHT11 {
 }
 
 class Fan {
-  int status = 0;
+  int speed = 0;
   int maxTemp = 0;
   int maxHumidity = 0;
 
   void update(var newConfig) {
-    status = newConfig["status"];
+    speed = newConfig["speed"];
     maxTemp = newConfig["max_temp"];
     maxHumidity = newConfig["max_hum"];
   }
