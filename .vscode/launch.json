@@ -20,7 +20,16 @@
         {
             "name": "flutter_app",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "toolArgs": [
+                "--dart-define",
+                "DEV=true",
+                "--dart-define",
+                "OFFLINE=false",
+                "--dart-define",
+                "IP=http://192.168.0.14:8000"
+            ]
+
         },
         {
             "name": "flutter_app (profile mode)",

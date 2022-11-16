@@ -133,13 +133,35 @@ class DataManager {
   // Constructor
   DataManager._internal();
 
-  Future<void> authUser() async {
+  Future<String> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token") ?? "";
+    if (token.isEmpty) {
+      if (kDebugMode) {
+        print("Empty token");
+      }
+      if(await authUser()){
+        prefs.reload();
+        token = prefs.getString("token") ?? "";
+        if(token.isEmpty){
+          return "";
+        } else {
+          return token;
+        }
+      }
+    } else {
+      return token;
+    }
+    return "";
+  }
+
+  Future<bool> authUser() async {
     // obtain shared preferences
     final prefs = await SharedPreferences.getInstance();
     String login = prefs.getString('login') ?? "";
     String password = prefs.getString('password') ?? "";
     if (login.isEmpty || password.isEmpty) {
-      return;
+      return false;
     }
     var url = Uri.parse("${connection._baseUrl}/auth");
     Map jsonBody = {'username': login, 'password': password};
@@ -151,13 +173,18 @@ class DataManager {
     }
     switch (response.body) {
       case "Password incorrect":
-        print(response.body);
-        break;
+        if (kDebugMode) {
+          print(response.body);
+        }
+        return false;
       case "Username incorrect":
-        print(response.body);
-        break;
+        if (kDebugMode) {
+          print(response.body);
+        }
+        return false;
       default:
         prefs.setString("token", response.body);
+        return true;
     }
   }
 
@@ -219,13 +246,7 @@ class DataManager {
   }
 
   Future<dynamic> getDailyData(String startDate, String endDate) async {
-    final prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token") ?? "";
-    if (token.isEmpty) {
-      await authUser();
-    }
-
-    await testToken();
+    String token = await getToken();
 
     var url = Uri.parse("${connection._baseUrl}/data/by_date");
     var jsonBodyEncoded = json.encode({"start": startDate, "end": endDate});
@@ -241,11 +262,7 @@ class DataManager {
 
   Future<dynamic> getHourlyData(
       String startDateTime, String endDateTime) async {
-    final prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token") ?? "";
-    if (token.isEmpty) {
-      await authUser();
-    }
+    String token = await getToken();
 
     await testToken();
 
@@ -269,11 +286,7 @@ class DataManager {
       return;
     }
 
-    final prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token") ?? "";
-    if (token.isEmpty) {
-      await authUser();
-    }
+    String token = await getToken();
 
     await testToken();
 

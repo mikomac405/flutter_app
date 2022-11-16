@@ -263,11 +263,11 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                                           setState(() {
                                             _isPressedFans = "OFF";
                                           });
-                                          connection.data.setConfig('vent',
-                                              'on', _fanPowerStatus.toString());
+                                          connection.data.setConfig('fan',
+                                              'start', '');
                                         } else {
-                                          connection.data.setConfig('vent',
-                                              'off', _fanPowerStatus.toString());
+                                          connection.data.setConfig('fan',
+                                              'stop', '');
                                           setState(() {
                                             _isPressedFans = "ON";
                                           });

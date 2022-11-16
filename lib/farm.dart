@@ -85,7 +85,7 @@ class Fan {
   int maxHumidity = 0;
 
   void update(var newConfig) {
-    status = newConfig["status"];
+    status = newConfig["state"];
     maxTemp = newConfig["max_temp"];
     maxHumidity = newConfig["max_hum"];
   }
