@@ -19,6 +19,25 @@ class _ChartsPageState extends State<ChartsPage> {
 
   bool showAvg = false;
 
+  final now = DateTime.now();
+  List<String> dates = [];
+    
+
+  void genDates(){
+    for(int i = 0; i < 5; i++){
+      setState(() {
+        dates.add(now.toString());
+        now.add(const Duration(days: 1));
+      });
+    }
+  }
+
+  @override
+  void initState(){
+    genDates();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -71,105 +90,8 @@ class _ChartsPageState extends State<ChartsPage> {
       fontWeight: FontWeight.bold,
       fontSize: 16,
     );
-    Widget text;
-    switch (value.toInt()) {
-      case 1:
-        text = const Text('1', style: style);
-        break;
-      case 2:
-        text = const Text('2', style: style);
-        break;
-      case 3:
-        text = const Text('3', style: style);
-        break;
-      case 4:
-        text = const Text('4', style: style);
-        break;
-      case 5:
-        text = const Text('5', style: style);
-        break;
-      case 6:
-        text = const Text('6', style: style);
-        break;
-      case 7:
-        text = const Text('7', style: style);
-        break;
-      case 8:
-        text = const Text('8', style: style);
-        break;
-      case 9:
-        text = const Text('9', style: style);
-        break;
-      case 10:
-        text = const Text('10', style: style);
-        break;
-      case 11:
-        text = const Text('11', style: style);
-        break;
-      case 12:
-        text = const Text('12', style: style);
-        break;
-      case 13:
-        text = const Text('13', style: style);
-        break;
-      case 14:
-        text = const Text('14', style: style);
-        break;
-      case 15:
-        text = const Text('15', style: style);
-        break;
-      case 16:
-        text = const Text('16', style: style);
-        break;
-      case 17:
-        text = const Text('17', style: style);
-        break;
-      case 18:
-        text = const Text('18', style: style);
-        break;
-      case 19:
-        text = const Text('19', style: style);
-        break;
-      case 20:
-        text = const Text('20', style: style);
-        break;
-      case 21:
-        text = const Text('21', style: style);
-        break;
-      case 22:
-        text = const Text('22', style: style);
-        break;
-      case 23:
-        text = const Text('23', style: style);
-        break;
-      case 24:
-        text = const Text('24', style: style);
-        break;
-      case 25:
-        text = const Text('25', style: style);
-        break;
-      case 26:
-        text = const Text('26', style: style);
-        break;
-      case 27:
-        text = const Text('27', style: style);
-        break;
-      case 28:
-        text = const Text('28', style: style);
-        break;
-      case 29:
-        text = const Text('29', style: style);
-        break;
-      case 30:
-        text = const Text('30', style: style);
-        break;
-      case 31:
-        text = const Text('31', style: style);
-        break;
-      default:
-        text = const Text('', style: style);
-        break;
-    }
+
+    Widget text = Text(dates[value.toInt()], style: style,);
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
@@ -270,7 +192,7 @@ class _ChartsPageState extends State<ChartsPage> {
         border: Border.all(color: const Color(0xff37434d)),
       ),
       minX: 0,
-      maxX: 31,
+      maxX: dates.length.toDouble()-1,
       minY: 0,
       maxY: 100,
       lineBarsData: [
