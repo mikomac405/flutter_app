@@ -122,6 +122,25 @@ class WifiManager {
   }
 }
 
+enum LoginStatus{
+  noUsername,
+  noPassword,
+  wrongUsername,
+  wrongPassword,
+  success
+}
+
+enum TokenStatus{
+  missingToken,
+  invalidPrefix,
+  invalidToken,
+  expiredToken,
+  unverificableIssuer,
+  inactiveIssuer,
+  validToken
+}
+
+
 class DataManager {
   static final DataManager _instance = DataManager._internal();
 
@@ -132,102 +151,96 @@ class DataManager {
   // Constructor
   DataManager._internal();
 
-  Future<String> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token") ?? "";
-    if (token.isEmpty) {
-      if (kDebugMode) {
-        print("Empty token");
-      }
-      if (await authUser()) {
-        prefs.reload();
-        token = prefs.getString("token") ?? "";
-        if (token.isEmpty) {
-          return "";
-        } else {
-          return token;
-        }
-      }
-    } else {
-      return token;
-    }
-    return "";
-  }
-
-  Future<bool> authUser() async {
-    // obtain shared preferences
+  Future<LoginStatus> authUser() async {
     final prefs = await SharedPreferences.getInstance();
     String login = prefs.getString('login') ?? "";
+    if(login.isEmpty) return LoginStatus.noUsername;
     String password = prefs.getString('password') ?? "";
-    if (login.isEmpty || password.isEmpty) {
-      return false;
-    }
+    if(password.isEmpty) return LoginStatus.noPassword;
+
     var url = Uri.parse("${connection._baseUrl}/auth");
-    Map jsonBody = {'username': login, 'password': password};
-    var jsonBodyEnocoded = json.encode(jsonBody);
+    Map jsonCredentials = {'username': login, 'password': password};
+    var jsonCredentialsEndoced = json.encode(jsonCredentials);
     var response = await http.post(url,
-        headers: {"Content-Type": "application/json"}, body: jsonBodyEnocoded);
+        headers: {"Content-Type": "application/json"}, body: jsonCredentialsEndoced);
     if (kDebugMode) {
       print(response.body);
     }
+
     switch (response.body) {
       case "Password incorrect":
         if (kDebugMode) {
           print(response.body);
         }
-        return false;
+        return LoginStatus.wrongPassword;
       case "Username incorrect":
         if (kDebugMode) {
           print(response.body);
         }
-        return false;
+        return LoginStatus.wrongUsername;
       default:
         prefs.setString("token", response.body);
-        return true;
+        return LoginStatus.success;
     }
+
+    // switch (response.body){
+    //   case "Token expired":
+    //     return LoginStatus.
+    //   case "Token missing"),
+    //   case "Inactive issuer"),
+    //   case "Unverifiable issuer"),
+    //   case "Invalid prefix"),
+    //   case "Invalid token",
+    //   }
+    // }
   }
 
-  Future<void> testToken() async {
+  Future<TokenStatus> checkToken() async {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token") ?? "";
+    if(token.isEmpty) return TokenStatus.missingToken;
+
     var url = Uri.parse("${connection._baseUrl}/token/test");
     var response =
         await http.post(url, headers: {"Authorization": "Bearer $token"});
     if (kDebugMode) {
       print(response.body);
     }
+
     switch (response.body) {
       case "Token expired":
-        await authUser();
-        break;
+        prefs.setBool("logged_in", false);
+        return TokenStatus.expiredToken;
       case "Token missing":
-        await authUser();
-        break;
+        prefs.setBool("logged_in", false);
+        return TokenStatus.missingToken;
       case "Inactive issuer":
-        print(response.body);
-        break;
+        prefs.setBool("logged_in", false);
+        return TokenStatus.inactiveIssuer;
       case "Unverifiable issuer":
-        print(response.body);
-        break;
+        prefs.setBool("logged_in", false);
+        return TokenStatus.unverificableIssuer;
       case "Invalid prefix":
-        print(response.body);
-        break;
+        prefs.setBool("logged_in", false);
+        return TokenStatus.invalidPrefix;
       case "Invalid token":
-        await authUser();
-        break;
+        prefs.setBool("logged_in", false); 
+        return TokenStatus.invalidToken;
       default:
-        if (int.parse(response.body) < 60) {
-          await authUser();
-        }
-    }
+        prefs.setBool("logged_in", true);
+        return TokenStatus.validToken;
   }
+  }
+
+
+
 
   Future<String> getComponentsStatus() async {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token") ?? "";
     if (token.isEmpty) {
-      print("Empty token");
-      await authUser();
+      prefs.setBool("logged_in", false);
+      return "";
     }
 
     if (ConnectionManager._isOffline) {
@@ -244,7 +257,12 @@ class DataManager {
   }
 
   Future<dynamic> getDailyData(String startDate, String endDate) async {
-    String token = await getToken();
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token") ?? "";
+    if (token.isEmpty) {
+      prefs.setBool("logged_in", false);
+      return "";
+    }
 
     var url = Uri.parse("${connection._baseUrl}/data/by_date");
     var jsonBodyEncoded = json.encode({"start": startDate, "end": endDate});
@@ -260,9 +278,12 @@ class DataManager {
 
   Future<dynamic> getHourlyData(
       String startDateTime, String endDateTime) async {
-    String token = await getToken();
-
-    await testToken();
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token") ?? "";
+    if (token.isEmpty) {
+      prefs.setBool("logged_in", false);
+      return "";
+    }
 
     var url = Uri.parse("${connection._baseUrl}/data/by_datetime");
     var jsonBodyEncoded =
@@ -284,9 +305,12 @@ class DataManager {
       return;
     }
 
-    String token = await getToken();
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString("token") ?? "";
+    if (token.isEmpty) {
+      prefs.setBool("logged_in", false);
 
-    await testToken();
+    }
 
     var url = Uri.parse("${connection._baseUrl}/config/" + component + "/set/");
     Map jsonbody = {'command': command, 'args': args};
