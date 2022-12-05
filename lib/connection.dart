@@ -123,7 +123,6 @@ class WifiManager {
 }
 
 class DataManager {
-  
   static final DataManager _instance = DataManager._internal();
 
   factory DataManager() {
@@ -140,10 +139,10 @@ class DataManager {
       if (kDebugMode) {
         print("Empty token");
       }
-      if(await authUser()){
+      if (await authUser()) {
         prefs.reload();
         token = prefs.getString("token") ?? "";
-        if(token.isEmpty){
+        if (token.isEmpty) {
           return "";
         } else {
           return token;
@@ -217,10 +216,9 @@ class DataManager {
         await authUser();
         break;
       default:
-        if(int.parse(response.body) < 60){
+        if (int.parse(response.body) < 60) {
           await authUser();
         }
-        
     }
   }
 
@@ -232,16 +230,16 @@ class DataManager {
       await authUser();
     }
 
-    if(ConnectionManager._isOffline){
+    if (ConnectionManager._isOffline) {
       var url = Uri.parse("${connection._baseUrl}/status/test");
       var status = await http.get(url);
       return status.body;
-    } 
+    }
     var url = Uri.parse("${connection._baseUrl}/status/");
     var status = await http.get(url, headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token"
-        });
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token"
+    });
     return status.body;
   }
 
@@ -294,7 +292,11 @@ class DataManager {
     Map jsonbody = {'command': command, 'args': args};
     var jsonbody1 = json.encode(jsonbody);
     var response = await http.post(url,
-        headers: {"Content-Type": "application/json", "Authorization": "Bearer $token"}, body: jsonbody1);
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: jsonbody1);
     if (kDebugMode) {
       print(response.body);
     }

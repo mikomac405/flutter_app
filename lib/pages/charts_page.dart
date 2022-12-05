@@ -24,11 +24,11 @@ class _ChartsPageState extends State<ChartsPage> {
     return Stack(
       children: <Widget>[
         AspectRatio(
-          aspectRatio: 1.70,
+          aspectRatio: 1.5,
           child: DecoratedBox(
             decoration: const BoxDecoration(
-              color: Color(0xff232d37),
-            ),
+                //color: Color(0xff232d37),
+                ),
             child: Padding(
               padding: const EdgeInsets.only(
                 right: 18,
@@ -37,7 +37,8 @@ class _ChartsPageState extends State<ChartsPage> {
                 bottom: 12,
               ),
               child: LineChart(
-                showAvg ? avgData() : mainData(),
+                mainData(), //TODO add diffrent chart
+                // showAvg ? avgData() : mainData(),
               ),
             ),
           ),
@@ -52,10 +53,10 @@ class _ChartsPageState extends State<ChartsPage> {
               });
             },
             child: Text(
-              'avg',
+              'Monthly',
               style: TextStyle(
                 fontSize: 12,
-                color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
+                color: showAvg ? Colors.black.withOpacity(0.5) : Colors.black,
               ),
             ),
           ),
@@ -72,41 +73,98 @@ class _ChartsPageState extends State<ChartsPage> {
     );
     Widget text;
     switch (value.toInt()) {
-      case 0:
-        text = const Text('00:00', style: style);
-        break;
       case 1:
-        text = const Text('02:00', style: style);
+        text = const Text('1', style: style);
         break;
       case 2:
-        text = const Text('04:00', style: style);
+        text = const Text('2', style: style);
         break;
       case 3:
-        text = const Text('06:00', style: style);
+        text = const Text('3', style: style);
         break;
       case 4:
-        text = const Text('08:00', style: style);
+        text = const Text('4', style: style);
         break;
       case 5:
-        text = const Text('10:00', style: style);
+        text = const Text('5', style: style);
         break;
       case 6:
-        text = const Text('12:00', style: style);
+        text = const Text('6', style: style);
         break;
       case 7:
-        text = const Text('14:00', style: style);
+        text = const Text('7', style: style);
         break;
       case 8:
-        text = const Text('16:00', style: style);
+        text = const Text('8', style: style);
         break;
       case 9:
-        text = const Text('18:00', style: style);
+        text = const Text('9', style: style);
         break;
       case 10:
-        text = const Text('20:00', style: style);
+        text = const Text('10', style: style);
         break;
       case 11:
-        text = const Text('22:00', style: style);
+        text = const Text('11', style: style);
+        break;
+      case 12:
+        text = const Text('12', style: style);
+        break;
+      case 13:
+        text = const Text('13', style: style);
+        break;
+      case 14:
+        text = const Text('14', style: style);
+        break;
+      case 15:
+        text = const Text('15', style: style);
+        break;
+      case 16:
+        text = const Text('16', style: style);
+        break;
+      case 17:
+        text = const Text('17', style: style);
+        break;
+      case 18:
+        text = const Text('18', style: style);
+        break;
+      case 19:
+        text = const Text('19', style: style);
+        break;
+      case 20:
+        text = const Text('20', style: style);
+        break;
+      case 21:
+        text = const Text('21', style: style);
+        break;
+      case 22:
+        text = const Text('22', style: style);
+        break;
+      case 23:
+        text = const Text('23', style: style);
+        break;
+      case 24:
+        text = const Text('24', style: style);
+        break;
+      case 25:
+        text = const Text('25', style: style);
+        break;
+      case 26:
+        text = const Text('26', style: style);
+        break;
+      case 27:
+        text = const Text('27', style: style);
+        break;
+      case 28:
+        text = const Text('28', style: style);
+        break;
+      case 29:
+        text = const Text('29', style: style);
+        break;
+      case 30:
+        text = const Text('30', style: style);
+        break;
+      case 31:
+        text = const Text('31', style: style);
         break;
       default:
         text = const Text('', style: style);
@@ -127,14 +185,32 @@ class _ChartsPageState extends State<ChartsPage> {
     );
     String text;
     switch (value.toInt()) {
-      case 1:
-        text = '10K';
+      case 10:
+        text = '10';
         break;
-      case 3:
-        text = '30k';
+      case 20:
+        text = '20';
         break;
-      case 5:
-        text = '50k';
+      case 30:
+        text = '30';
+        break;
+      case 40:
+        text = '40';
+        break;
+      case 50:
+        text = '50';
+        break;
+      case 60:
+        text = '60';
+        break;
+      case 70:
+        text = '70';
+        break;
+      case 80:
+        text = '80';
+        break;
+      case 90:
+        text = '90';
         break;
       default:
         return Container();
@@ -147,7 +223,8 @@ class _ChartsPageState extends State<ChartsPage> {
     return LineChartData(
       gridData: FlGridData(
         show: true,
-        drawVerticalLine: true,
+        drawVerticalLine: false,
+        drawHorizontalLine: false,
         horizontalInterval: 1,
         verticalInterval: 1,
         getDrawingHorizontalLine: (value) {
@@ -193,19 +270,19 @@ class _ChartsPageState extends State<ChartsPage> {
         border: Border.all(color: const Color(0xff37434d)),
       ),
       minX: 0,
-      maxX: 11,
+      maxX: 31,
       minY: 0,
-      maxY: 6,
+      maxY: 100,
       lineBarsData: [
         LineChartBarData(
           spots: const [
-            FlSpot(0, 3),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
+            FlSpot(0, 60),
+            FlSpot(3, 50),
+            FlSpot(6, 40),
+            FlSpot(9, 30),
+            FlSpot(12, 50),
+            FlSpot(15, 40),
+            FlSpot(31, 30),
           ],
           isCurved: true,
           gradient: LinearGradient(
@@ -229,12 +306,14 @@ class _ChartsPageState extends State<ChartsPage> {
     );
   }
 
+// <---    SECOND CHART  --->
+
   LineChartData avgData() {
     return LineChartData(
       lineTouchData: LineTouchData(enabled: false),
       gridData: FlGridData(
         show: true,
-        drawHorizontalLine: true,
+        drawHorizontalLine: false,
         verticalInterval: 1,
         horizontalInterval: 1,
         getDrawingVerticalLine: (value) {
