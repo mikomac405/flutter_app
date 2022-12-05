@@ -25,9 +25,9 @@
                 "--dart-define",
                 "DEV=true",
                 "--dart-define",
-                "OFFLINE=false",
+                "OFFLINE=true",
                 "--dart-define",
-                "IP=http://192.168.0.14:8000"
+                "IP=http://192.168.0.10:8000"
             ]
 
         },

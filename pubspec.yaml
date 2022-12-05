@@ -47,6 +47,7 @@ dependencies:
   network_info_plus: ^2.1.4+1
   base_codecs: ^1.0.1
   numberpicker: ^2.1.1
+  fl_chart: ^0.55.2
 
 dev_dependencies:
   flutter_test:

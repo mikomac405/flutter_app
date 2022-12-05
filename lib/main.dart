@@ -220,8 +220,16 @@ class _AppControllerState extends State<AppController> {
                     ElevatedButton(
                       onPressed: () async {
                         final prefs = await SharedPreferences.getInstance();
-                        prefs.setString("login", loginController.text.replaceAll("\n", "").replaceAll(" ", ""));
-                        prefs.setString("password", passwordController.text.replaceAll("\n", "").replaceAll(" ", ""));
+                        prefs.setString(
+                            "login",
+                            loginController.text
+                                .replaceAll("\n", "")
+                                .replaceAll(" ", ""));
+                        prefs.setString(
+                            "password",
+                            passwordController.text
+                                .replaceAll("\n", "")
+                                .replaceAll(" ", ""));
                       },
                       child: const Text('Save credentials'),
                     ),
