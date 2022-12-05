@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:inzynierka/pages/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'connection.dart';
 import 'pages/fans_and_lights_page.dart';
@@ -27,6 +28,11 @@ void main() {
     var status = connection.data.getComponentsStatus();
     status.then((value) => farm.update(jsonDecode(value)));
   });
+
+  isLogged();
+  Timer.periodic(const Duration(seconds: 5), (timer) async {
+        await isLogged();
+    });
 
   runApp(const MyApp());
 }
@@ -67,9 +73,7 @@ class _AppControllerState extends State<AppController> {
   );
 
   ConnectionStatus connectionStatus = ConnectionStatus.none;
-
-  final loginController = TextEditingController();
-  final passwordController = TextEditingController();
+ //late final prefs;
 
   @override
   void dispose() {
@@ -81,17 +85,9 @@ class _AppControllerState extends State<AppController> {
   void initState() {
     super.initState();
     connection.addListener(_connectionChecker);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getCredentials();
-    });
   }
 
-  _getCredentials() async {
-    // obtain shared preferences
-    final prefs = await SharedPreferences.getInstance();
-    loginController.text = prefs.getString('login') ?? "";
-    passwordController.text = prefs.getString('password') ?? "";
-  }
+  
 
   ///This function is responsible for setting states of app based on
   ///ConnectionType
@@ -120,6 +116,9 @@ class _AppControllerState extends State<AppController> {
       case ConnectionStatus.noEsp:
         return const EspConnectionPage();
       default:
+        if(!logged_in){
+          return const LoginPage();
+        }
         if (connectionStatus == ConnectionStatus.restApi) {
           return Scaffold(
             appBar: AppBar(
@@ -143,129 +142,13 @@ class _AppControllerState extends State<AppController> {
                 ChartsPage(title: "Lights"),
               ],
             ),
-            drawer: Drawer(
-              //width: !kIsWeb ? MediaQuery.of(context).size.width * 0.8 : 800,
-              child: Container(
-                margin: const EdgeInsets.all(10),
-                child: ListView(
-                  children: [
-                    const Text("API Credentials:"),
-                    TextField(
-                        controller: loginController,
-                        decoration: const InputDecoration(labelText: "Login"),
-                        onTap: () {
-                          !kIsWeb || !(Platform.isAndroid || Platform.isIOS)
-                              ? showDialog(
-                                  context: context,
-                                  builder: (ctx) => AlertDialog(
-                                        title: const Text("Login Dialog"),
-                                        content: SingleChildScrollView(
-                                          child: ListBody(children: [
-                                            TextField(
-                                              controller: loginController,
-                                              decoration: const InputDecoration(
-                                                  labelText: "Login"),
-                                            ),
-                                            VirtualKeyboard(
-                                                type: VirtualKeyboardType
-                                                    .Alphanumeric,
-                                                textController: loginController)
-                                          ]),
-                                        ),
-                                        actions: <Widget>[
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text("Ok"))
-                                        ],
-                                      ))
-                              : Null;
-                        }),
-                    TextField(
-                        controller: passwordController,
-                        decoration:
-                            const InputDecoration(labelText: "Password"),
-                        onTap: () {
-                          !kIsWeb || !(Platform.isAndroid || Platform.isIOS)
-                              ? showDialog(
-                                  context: context,
-                                  builder: (ctx) => AlertDialog(
-                                        title: const Text("Password Dialog"),
-                                        content: SingleChildScrollView(
-                                          child: ListBody(children: [
-                                            TextField(
-                                              controller: passwordController,
-                                              decoration: const InputDecoration(
-                                                  labelText: "Password"),
-                                            ),
-                                            VirtualKeyboard(
-                                                type: VirtualKeyboardType
-                                                    .Alphanumeric,
-                                                textController:
-                                                    passwordController)
-                                          ]),
-                                        ),
-                                        actions: <Widget>[
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text("Ok"))
-                                        ],
-                                      ))
-                              : Null;
-                        }),
-                    const Divider(),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        prefs.setString(
-                            "login",
-                            loginController.text
-                                .replaceAll("\n", "")
-                                .replaceAll(" ", ""));
-                        prefs.setString(
-                            "password",
-                            passwordController.text
-                                .replaceAll("\n", "")
-                                .replaceAll(" ", ""));
-                      },
-                      child: const Text('Save credentials'),
-                    ),
-                    const Divider(),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        String login = prefs.getString("login") ?? "";
-                        String password = prefs.getString("password") ?? "";
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              "Login: " + login + "\nPassword: " + password),
-                        ));
-                      },
-                      child: const Text('Print credentials'),
-                    ),
-                    const Divider(),
-                    ElevatedButton(
-                      onPressed: () async {
-                        var data = await connection.data
-                            .getDailyData("2020-10-15", "2020-10-18");
-                        for (var el in data) {
-                          print(el);
-                        }
-                        // var data2 = await connection.data.getHourlyData(
-                        //     "2020-10-15 10:00:00", "2020-10-16 15:00:00");
-                        // for (var el in data2) {
-                        //   print(el);
-                        // }
-                      },
-                      child: const Text('Test data by day'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // drawer: Drawer(
+            //   //width: !kIsWeb ? MediaQuery.of(context).size.width * 0.8 : 800,
+            //     child: Container(
+            //       margin: const EdgeInsets.all(10),
+            //       child: const Text("Be soon"),
+            //   ),
+            // )
           );
         } else {
           return Column(children: const [Text("Something gone wrong!")]);

@@ -11,6 +11,17 @@ late BluetoothDevice androidDevice;
 
 bool disconnectRequest = false;
 
+bool logged_in = false;
+
+Future<void> isLogged() async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString("token") ?? "";
+  if(!token.isEmpty){
+    await connection.data.checkToken();
+  }
+  logged_in = prefs.getBool("logged_in") ?? false;
+}
+
 // String login = "";
 // String password = "";
 // String token = "";
