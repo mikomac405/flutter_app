@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -10,14 +9,14 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vk/vk.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class ChartsTimeframe extends StatefulWidget {
+  const ChartsTimeframe({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<ChartsTimeframe> createState() => _ChartsTimeframeState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _ChartsTimeframeState extends State<ChartsTimeframe> {
   final loginController = TextEditingController();
   final passwordController = TextEditingController();
   @override
@@ -38,29 +37,31 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("App"),
-      ),
-      body: Center(
+      body: Container(
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 150, horizontal: 300),
-          children: [
-            const Text("API Credentials:"),
+          children: <Widget>[
+            const Text("Please provide timeframe for chart:"),
+            const SizedBox(height: 15),
+            const Text("End date"),
+            const SizedBox(height: 5),
             TextField(
                 controller: loginController,
-                decoration: const InputDecoration(labelText: "Login"),
+                decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(),
+                    hintText: 'Ex. 15-11-2022'),
                 onTap: () {
                   !kIsWeb || !(Platform.isAndroid || Platform.isIOS)
                       ? showDialog(
                           context: context,
                           builder: (ctx) => AlertDialog(
-                                title: const Text("Login Dialog"),
+                                title: const Text("Start Date Dialog"),
                                 content: SingleChildScrollView(
                                   child: ListBody(children: [
                                     TextField(
                                       controller: loginController,
-                                      decoration: const InputDecoration(
-                                          labelText: "Login"),
+                                      decoration: new InputDecoration.collapsed(
+                                          hintText: 'Ex. 15-11-2022'),
                                     ),
                                     VirtualKeyboard(
                                         type: VirtualKeyboardType.Alphanumeric,
@@ -77,22 +78,26 @@ class _LoginPageState extends State<LoginPage> {
                               ))
                       : Null;
                 }),
+            const SizedBox(height: 15),
+            const Text("End date"),
+            const SizedBox(height: 5),
             TextField(
                 controller: passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(labelText: "Password"),
+                decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(),
+                    hintText: 'Ex. 15-12-2022'),
                 onTap: () {
                   !kIsWeb || !(Platform.isAndroid || Platform.isIOS)
                       ? showDialog(
                           context: context,
                           builder: (ctx) => AlertDialog(
-                                title: const Text("Password Dialog"),
+                                title: const Text("End Date Dialog"),
                                 content: SingleChildScrollView(
                                   child: ListBody(children: [
                                     TextField(
                                       controller: passwordController,
                                       decoration: const InputDecoration(
-                                          labelText: "Password"),
+                                          labelText: "End data"),
                                     ),
                                     VirtualKeyboard(
                                         type: VirtualKeyboardType.Alphanumeric,
@@ -127,31 +132,31 @@ class _LoginPageState extends State<LoginPage> {
                 switch (result) {
                   case LoginStatus.noPassword:
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Empty password"),
+                      content: Text("Empty end date"),
                     ));
                     break;
                   case LoginStatus.noUsername:
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Empty username"),
+                      content: Text("Empty start date"),
                     ));
                     break;
                   case LoginStatus.wrongPassword:
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Wrong password"),
+                      content: Text("Wrong end date"),
                     ));
                     break;
                   case LoginStatus.wrongUsername:
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Wrong username"),
+                      content: Text("Wrong start date"),
                     ));
                     break;
                   default:
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Login successful"),
+                      content: Text("Correct timeframe"),
                     ));
                 }
               },
-              child: const Text('Login'),
+              child: const Text('Submit'),
             ),
           ],
         ),

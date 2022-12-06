@@ -59,18 +59,16 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                       const SizedBox(width: 10),
                       ElevatedButton(
                           onPressed: () {
-                            if (_isPressedFans == "ON") {
-                              setState(() {
-                                _isPressedFans = "OFF";
-                              });
-
-                              connection.data.setConfig(
-                                  'fan', 'stop', '');
-                            } else {
-                              connection.data.setConfig(
-                                  'fan', 'start', '');
+                            if (_isPressedFans == "OFF") {
                               setState(() {
                                 _isPressedFans = "ON";
+                              });
+
+                              connection.data.setConfig('fan', 'stop', '');
+                            } else {
+                              connection.data.setConfig('fan', 'start', '');
+                              setState(() {
+                                _isPressedFans = "OFF";
                               });
                             }
                           },
@@ -263,11 +261,11 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                                           setState(() {
                                             _isPressedFans = "OFF";
                                           });
-                                          connection.data.setConfig('fan',
-                                              'start', '');
+                                          connection.data
+                                              .setConfig('fan', 'start', '');
                                         } else {
-                                          connection.data.setConfig('fan',
-                                              'stop', '');
+                                          connection.data
+                                              .setConfig('fan', 'stop', '');
                                           setState(() {
                                             _isPressedFans = "ON";
                                           });

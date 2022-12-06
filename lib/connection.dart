@@ -122,7 +122,7 @@ class WifiManager {
   }
 }
 
-enum LoginStatus{
+enum LoginStatus {
   noUsername,
   noPassword,
   wrongUsername,
@@ -130,7 +130,7 @@ enum LoginStatus{
   success
 }
 
-enum TokenStatus{
+enum TokenStatus {
   missingToken,
   invalidPrefix,
   invalidToken,
@@ -139,7 +139,6 @@ enum TokenStatus{
   inactiveIssuer,
   validToken
 }
-
 
 class DataManager {
   static final DataManager _instance = DataManager._internal();
@@ -154,15 +153,16 @@ class DataManager {
   Future<LoginStatus> authUser() async {
     final prefs = await SharedPreferences.getInstance();
     String login = prefs.getString('login') ?? "";
-    if(login.isEmpty) return LoginStatus.noUsername;
+    if (login.isEmpty) return LoginStatus.noUsername;
     String password = prefs.getString('password') ?? "";
-    if(password.isEmpty) return LoginStatus.noPassword;
+    if (password.isEmpty) return LoginStatus.noPassword;
 
     var url = Uri.parse("${connection._baseUrl}/auth");
     Map jsonCredentials = {'username': login, 'password': password};
     var jsonCredentialsEndoced = json.encode(jsonCredentials);
     var response = await http.post(url,
-        headers: {"Content-Type": "application/json"}, body: jsonCredentialsEndoced);
+        headers: {"Content-Type": "application/json"},
+        body: jsonCredentialsEndoced);
     if (kDebugMode) {
       print(response.body);
     }
@@ -198,7 +198,7 @@ class DataManager {
   Future<TokenStatus> checkToken() async {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token") ?? "";
-    if(token.isEmpty) return TokenStatus.missingToken;
+    if (token.isEmpty) return TokenStatus.missingToken;
 
     var url = Uri.parse("${connection._baseUrl}/token/test");
     var response =
@@ -224,16 +224,13 @@ class DataManager {
         prefs.setBool("logged_in", false);
         return TokenStatus.invalidPrefix;
       case "Invalid token":
-        prefs.setBool("logged_in", false); 
+        prefs.setBool("logged_in", false);
         return TokenStatus.invalidToken;
       default:
         prefs.setBool("logged_in", true);
         return TokenStatus.validToken;
+    }
   }
-  }
-
-
-
 
   Future<String> getComponentsStatus() async {
     final prefs = await SharedPreferences.getInstance();
@@ -309,7 +306,6 @@ class DataManager {
     String token = prefs.getString("token") ?? "";
     if (token.isEmpty) {
       prefs.setBool("logged_in", false);
-
     }
 
     var url = Uri.parse("${connection._baseUrl}/config/" + component + "/set/");

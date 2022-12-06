@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inzynierka/globals.dart';
+import 'package:inzynierka/pages/charts_timeframe.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class ChartsPage extends StatefulWidget {
@@ -21,10 +22,9 @@ class _ChartsPageState extends State<ChartsPage> {
 
   final now = DateTime.now();
   List<String> dates = [];
-    
 
-  void genDates(){
-    for(int i = 0; i < 5; i++){
+  void genDates() {
+    for (int i = 0; i < 5; i++) {
       setState(() {
         dates.add(now.toString());
         now.add(const Duration(days: 1));
@@ -33,55 +33,63 @@ class _ChartsPageState extends State<ChartsPage> {
   }
 
   @override
-  void initState(){
+  void initState() {
     genDates();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: 1.5,
-          child: DecoratedBox(
-            decoration: const BoxDecoration(
-                //color: Color(0xff232d37),
+    if ((startDate == "") & (endDate == "")) {
+      return Scaffold(
+        body: PageView(
+          children: const [ChartsTimeframe()],
+        ),
+      );
+    } else {
+      return Stack(
+        children: <Widget>[
+          AspectRatio(
+            aspectRatio: 1.5,
+            child: DecoratedBox(
+              decoration: const BoxDecoration(
+                  //color: Color(0xff232d37),
+                  ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  right: 18,
+                  left: 12,
+                  top: 24,
+                  bottom: 12,
                 ),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                right: 18,
-                left: 12,
-                top: 24,
-                bottom: 12,
-              ),
-              child: LineChart(
-                mainData(), //TODO add diffrent chart
-                // showAvg ? avgData() : mainData(),
+                child: LineChart(
+                  mainData(), //TODO add diffrent chart
+                  // showAvg ? avgData() : mainData(),
+                ),
               ),
             ),
           ),
-        ),
-        SizedBox(
-          width: 60,
-          height: 34,
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                showAvg = !showAvg;
-              });
-            },
-            child: Text(
-              'Monthly',
-              style: TextStyle(
-                fontSize: 12,
-                color: showAvg ? Colors.black.withOpacity(0.5) : Colors.black,
+          SizedBox(
+            width: 60,
+            height: 34,
+            child: TextButton(
+              onPressed: () {
+                setState(() {
+                  showAvg = !showAvg;
+                });
+              },
+              child: Text(
+                'Monthly',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: showAvg ? Colors.black.withOpacity(0.5) : Colors.black,
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    }
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
@@ -91,7 +99,10 @@ class _ChartsPageState extends State<ChartsPage> {
       fontSize: 16,
     );
 
-    Widget text = Text(dates[value.toInt()], style: style,);
+    Widget text = Text(
+      dates[value.toInt()],
+      style: style,
+    );
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
@@ -192,7 +203,7 @@ class _ChartsPageState extends State<ChartsPage> {
         border: Border.all(color: const Color(0xff37434d)),
       ),
       minX: 0,
-      maxX: dates.length.toDouble()-1,
+      maxX: dates.length.toDouble() - 1,
       minY: 0,
       maxY: 100,
       lineBarsData: [

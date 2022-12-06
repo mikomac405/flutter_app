@@ -13,10 +13,13 @@ bool disconnectRequest = false;
 
 bool logged_in = false;
 
+String startDate = "";
+String endDate = "";
+
 Future<void> isLogged() async {
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString("token") ?? "";
-  if(!token.isEmpty){
+  if (!token.isEmpty) {
     await connection.data.checkToken();
   }
   logged_in = prefs.getBool("logged_in") ?? false;
