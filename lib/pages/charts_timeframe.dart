@@ -17,21 +17,11 @@ class ChartsTimeframe extends StatefulWidget {
 }
 
 class _ChartsTimeframeState extends State<ChartsTimeframe> {
-  final loginController = TextEditingController();
-  final passwordController = TextEditingController();
+  final startDateController = TextEditingController();
+  final endDateController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getCredentials();
-    });
-  }
-
-  _getCredentials() async {
-    // obtain shared preferences
-    final prefs = await SharedPreferences.getInstance();
-    loginController.text = prefs.getString('login') ?? "";
-    passwordController.text = prefs.getString('password') ?? "";
   }
 
   @override
@@ -46,10 +36,10 @@ class _ChartsTimeframeState extends State<ChartsTimeframe> {
             const Text("End date"),
             const SizedBox(height: 5),
             TextField(
-                controller: loginController,
+                controller: startDateController,
                 decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(),
-                    hintText: 'Ex. 15-11-2022'),
+                    hintText: 'Ex. 05-09-2022'),
                 onTap: () {
                   !kIsWeb || !(Platform.isAndroid || Platform.isIOS)
                       ? showDialog(
@@ -59,13 +49,13 @@ class _ChartsTimeframeState extends State<ChartsTimeframe> {
                                 content: SingleChildScrollView(
                                   child: ListBody(children: [
                                     TextField(
-                                      controller: loginController,
+                                      controller: startDateController,
                                       decoration: new InputDecoration.collapsed(
-                                          hintText: 'Ex. 15-11-2022'),
+                                          hintText: 'Ex. 05-09-2022'),
                                     ),
                                     VirtualKeyboard(
                                         type: VirtualKeyboardType.Alphanumeric,
-                                        textController: loginController)
+                                        textController: startDateController)
                                   ]),
                                 ),
                                 actions: <Widget>[
@@ -82,10 +72,10 @@ class _ChartsTimeframeState extends State<ChartsTimeframe> {
             const Text("End date"),
             const SizedBox(height: 5),
             TextField(
-                controller: passwordController,
+                controller: endDateController,
                 decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(),
-                    hintText: 'Ex. 15-12-2022'),
+                    hintText: 'Ex. 05-10-2022'),
                 onTap: () {
                   !kIsWeb || !(Platform.isAndroid || Platform.isIOS)
                       ? showDialog(
@@ -95,13 +85,13 @@ class _ChartsTimeframeState extends State<ChartsTimeframe> {
                                 content: SingleChildScrollView(
                                   child: ListBody(children: [
                                     TextField(
-                                      controller: passwordController,
+                                      controller: endDateController,
                                       decoration: const InputDecoration(
                                           labelText: "End data"),
                                     ),
                                     VirtualKeyboard(
                                         type: VirtualKeyboardType.Alphanumeric,
-                                        textController: passwordController)
+                                        textController: endDateController)
                                   ]),
                                 ),
                                 actions: <Widget>[
@@ -116,45 +106,14 @@ class _ChartsTimeframeState extends State<ChartsTimeframe> {
                 }),
             const Divider(),
             ElevatedButton(
-              onPressed: () async {
-                final prefs = await SharedPreferences.getInstance();
-                prefs.setString(
-                    "login",
-                    loginController.text
-                        .replaceAll("\n", "")
-                        .replaceAll(" ", ""));
-                prefs.setString(
-                    "password",
-                    passwordController.text
-                        .replaceAll("\n", "")
-                        .replaceAll(" ", ""));
-                final result = await connection.data.authUser();
-                switch (result) {
-                  case LoginStatus.noPassword:
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Empty end date"),
-                    ));
-                    break;
-                  case LoginStatus.noUsername:
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Empty start date"),
-                    ));
-                    break;
-                  case LoginStatus.wrongPassword:
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Wrong end date"),
-                    ));
-                    break;
-                  case LoginStatus.wrongUsername:
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Wrong start date"),
-                    ));
-                    break;
-                  default:
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Correct timeframe"),
-                    ));
-                }
+              onPressed: () {
+                startDate = startDateController.text
+                    .replaceAll("\n", "")
+                    .replaceAll(" ", "");
+
+                endDate = endDateController.text
+                    .replaceAll("\n", "")
+                    .replaceAll(" ", "");
               },
               child: const Text('Submit'),
             ),

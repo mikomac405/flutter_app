@@ -159,7 +159,7 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(
+                Column(
                   children: [
                     Row(children: [
                       const Text("Start",
@@ -279,6 +279,7 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                           ])
                     ],
                   ),
+                  const SizedBox(height: 20),
                   Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -303,6 +304,7 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                           style: TextStyle(fontSize: 30, height: 1),
                         ),
                       ]),
+                  const SizedBox(height: 10),
                   Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -361,6 +363,7 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                               style: const TextStyle(fontSize: 30),
                             )),
                       ]),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -394,6 +397,7 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                                   setState(() => _lightsStartMinutes = value),
                             ),
                           ]),
+                          const SizedBox(height: 20),
                           Row(children: [
                             const Text("Stop",
                                 style: TextStyle(fontSize: 25, height: 1)),
