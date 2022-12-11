@@ -129,7 +129,31 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                     style: TextStyle(fontSize: 20, height: 1),
                   )
                 ]),
-            const SizedBox(height: 100),
+            const SizedBox(height: 10),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: () {
+                        if (_isPressedLights == "ON") {
+                          setState(() {
+                            _isPressedLights = "OFF";
+                          });
+                          connection.data.setConfig("led", "on", "");
+                        } else {
+                          connection.data.setConfig("led", "off", "");
+                          setState(() {
+                            _isPressedLights = "ON";
+                          });
+                        }
+                      },
+                      child: Text(
+                        "SAVE",
+                        style: const TextStyle(fontSize: 30),
+                      )),
+                ]),
+            const SizedBox(height: 50),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               const Text(
                 "LIGHTS",
@@ -222,6 +246,30 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                 ),
               ],
             ),
+            const SizedBox(height: 10),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: () {
+                        if (_isPressedLights == "ON") {
+                          setState(() {
+                            _isPressedLights = "OFF";
+                          });
+                          connection.data.setConfig("led", "on", "");
+                        } else {
+                          connection.data.setConfig("led", "off", "");
+                          setState(() {
+                            _isPressedLights = "ON";
+                          });
+                        }
+                      },
+                      child: Text(
+                        "SAVE",
+                        style: const TextStyle(fontSize: 30),
+                      )),
+                ]),
           ],
         ),
       ),
@@ -329,7 +377,21 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                           style: TextStyle(fontSize: 30, height: 1),
                         ),
                         const SizedBox(width: 40),
-                      ])
+                      ]),
+                  const SizedBox(height: 20),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {
+                              //save data
+                            },
+                            child: Text(
+                              "SAVE",
+                              style: const TextStyle(fontSize: 30),
+                            )),
+                      ]),
                 ]),
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -430,6 +492,20 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 20),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {
+                              //save data
+                            },
+                            child: Text(
+                              "SAVE",
+                              style: const TextStyle(fontSize: 30),
+                            )),
+                      ]),
                 ]),
           ],
         ),
