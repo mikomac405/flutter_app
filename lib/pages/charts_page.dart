@@ -35,17 +35,19 @@ class _ChartsPageState extends State<ChartsPage> {
   @override
   void initState() {
     genDates();
+    chartsData.addListener(_refresh);
     super.initState();
+  }
+
+  void _refresh() {
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    if ((startDate == "") & (endDate == "")) {
-      return Scaffold(
-        body: PageView(
-          children: const [ChartsTimeframe()],
-        ),
-      );
+    if (chartsData.apiData.isEmpty) {
+      // ignore: void_checks
+      return const ChartsTimeframe();
     } else {
       return Stack(
         children: <Widget>[
@@ -87,6 +89,9 @@ class _ChartsPageState extends State<ChartsPage> {
               ),
             ),
           ),
+          ElevatedButton(
+              onPressed: () => chartsData.clearData(),
+              child: const Text("Clear data"))
         ],
       );
     }

@@ -270,7 +270,12 @@ class DataManager {
           "Authorization": "Bearer $token"
         },
         body: jsonBodyEncoded);
-    return jsonDecode(response.body);
+    if (response.body != "Not exisiting data") {
+      var res = jsonDecode(response.body);
+      print(res.runtimeType);
+      return res;
+    }
+    return {};
   }
 
   Future<dynamic> getHourlyData(

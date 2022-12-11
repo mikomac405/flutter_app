@@ -20,6 +20,7 @@ import '../globals.dart';
 
 void main() {
   connection = ConnectionManager();
+
   Timer.periodic(const Duration(seconds: 10), (timer) {
     connection.checkConnectionStatus();
   });
@@ -29,10 +30,9 @@ void main() {
     status.then((value) => farm.update(jsonDecode(value)));
   });
 
-  isLogged();
   Timer.periodic(const Duration(seconds: 5), (timer) async {
-        await isLogged();
-    });
+    await isLogged();
+  });
 
   runApp(const MyApp());
 }
@@ -73,7 +73,7 @@ class _AppControllerState extends State<AppController> {
   );
 
   ConnectionStatus connectionStatus = ConnectionStatus.none;
- //late final prefs;
+  //late final prefs;
 
   @override
   void dispose() {
@@ -85,9 +85,8 @@ class _AppControllerState extends State<AppController> {
   void initState() {
     super.initState();
     connection.addListener(_connectionChecker);
+    isLogged();
   }
-
-  
 
   ///This function is responsible for setting states of app based on
   ///ConnectionType
@@ -116,10 +115,13 @@ class _AppControllerState extends State<AppController> {
       case ConnectionStatus.noEsp:
         return const EspConnectionPage();
       default:
-        if(!logged_in){
+        if (loggedIn == AppLoginStatus.notLoggedIn) {
           return const LoginPage();
+        } else if (loggedIn == AppLoginStatus.loggingIn) {
+          return const LoadingPage();
         }
-        if (connectionStatus == ConnectionStatus.restApi) {
+        if (connectionStatus == ConnectionStatus.restApi &&
+            loggedIn == AppLoginStatus.loggedIn) {
           return Scaffold(
             appBar: AppBar(
                 title: Row(
