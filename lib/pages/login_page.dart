@@ -50,7 +50,9 @@ class _LoginPageState extends State<LoginPage> {
                 controller: loginController,
                 decoration: const InputDecoration(labelText: "Login"),
                 onTap: () {
-                  !kIsWeb || !(Platform.isAndroid || Platform.isIOS)
+                  !kIsWeb ||
+                          !(defaultTargetPlatform == TargetPlatform.android ||
+                              defaultTargetPlatform == TargetPlatform.iOS)
                       ? showDialog(
                           context: context,
                           builder: (ctx) => AlertDialog(
@@ -82,7 +84,9 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: true,
                 decoration: const InputDecoration(labelText: "Password"),
                 onTap: () {
-                  !kIsWeb || !(Platform.isAndroid || Platform.isIOS)
+                  !kIsWeb ||
+                          !(defaultTargetPlatform == TargetPlatform.android ||
+                              defaultTargetPlatform == TargetPlatform.iOS)
                       ? showDialog(
                           context: context,
                           builder: (ctx) => AlertDialog(
