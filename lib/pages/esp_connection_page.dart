@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:inzynierka/widgets/wifi_form.dart';
 import 'package:inzynierka/globals.dart';
+import 'package:flutter/foundation.dart';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:location/location.dart';
 import 'dart:io' show Platform;
@@ -31,7 +32,7 @@ class EspConnectionPageState extends State<EspConnectionPage> {
 
     // ================== ANDROID ==================
 
-    if (Platform.isAndroid) {
+    if (!kIsWeb || !(Platform.isAndroid || Platform.isIOS)) {
       const AndroidIntent(
         action: 'android.bluetooth.adapter.action.REQUEST_ENABLE',
       ).launch();
@@ -113,7 +114,7 @@ class EspConnectionPageState extends State<EspConnectionPage> {
         appBar: AppBar(
           title: const Text("WiFi form"),
         ),
-        body: Platform.isAndroid
+        body: !kIsWeb || !(Platform.isAndroid || Platform.isIOS)
             ? (isConnected && !isConnecting)
                 ? const WifiForm()
                 : Column(children: [

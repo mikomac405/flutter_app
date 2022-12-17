@@ -14,8 +14,8 @@ class ChartsPage extends StatefulWidget {
 
 class _ChartsPageState extends State<ChartsPage> {
   List<Color> gradientColors = [
-    const Color(0xff23b6e6),
-    const Color(0xff02d39a),
+    Color.fromARGB(255, 0, 0, 0),
+    Color.fromARGB(255, 201, 201, 201),
   ];
 
   bool showAvg = false;

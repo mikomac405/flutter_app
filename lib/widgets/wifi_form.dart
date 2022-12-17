@@ -47,7 +47,7 @@ class _WifiFormState extends State<WifiForm> {
   void initState() {
     _controllerText = TextEditingController();
     super.initState();
-    if (Platform.isAndroid) {
+    if (!kIsWeb || !(Platform.isAndroid || Platform.isIOS)) {
       getWifiName();
     } else if (Platform.isLinux) {
       getWifisList();
@@ -64,7 +64,7 @@ class _WifiFormState extends State<WifiForm> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Platform.isAndroid
+              !kIsWeb || !(Platform.isAndroid || Platform.isIOS)
                   ? TextFormField(
                       controller: TextEditingController(text: ssid),
                       decoration: const InputDecoration(
@@ -128,7 +128,8 @@ class _WifiFormState extends State<WifiForm> {
                       if (Platform.isLinux) {
                         // TODO: Add selected item to list!
                         connection.wifi.connectToWifi(ssids.first, pass);
-                      } else if (Platform.isAndroid) {
+                      } else if (!kIsWeb ||
+                          !(Platform.isAndroid || Platform.isIOS)) {
                         List<BluetoothService> services =
                             await androidDevice.discoverServices();
                         //TODO: Check if for loop can be used insted of forEach
