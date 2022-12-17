@@ -7,9 +7,6 @@ class LoadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("App"),
-      ),
       body: Center(
         child: LoadingAnimationWidget.staggeredDotsWave(
           color: Colors.blue,

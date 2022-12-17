@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:inzynierka/data_mng.dart';
+import 'package:inzynierka/pages/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'connection.dart';
-import 'pages/fans_page.dart';
-import 'pages/lights_page.dart';
+import 'pages/fans_and_lights_page.dart';
+import 'pages/charts_page.dart';
 import 'pages/home_page.dart';
 import 'globals.dart';
 import 'package:vk/vk.dart';
@@ -19,13 +20,18 @@ import '../globals.dart';
 
 void main() {
   connection = ConnectionManager();
-  Timer.periodic(const Duration(seconds: 20), (timer) {
+
+  Timer.periodic(const Duration(seconds: 10), (timer) {
     connection.checkConnectionStatus();
   });
 
-  Timer.periodic(const Duration(seconds: 60), (timer) {
-    var status = connection.getComponentsStatus();
+  Timer.periodic(const Duration(seconds: 30), (timer) {
+    var status = connection.data.getComponentsStatus();
     status.then((value) => farm.update(jsonDecode(value)));
+  });
+
+  Timer.periodic(const Duration(seconds: 5), (timer) async {
+    await isLogged();
   });
 
   runApp(const MyApp());
@@ -36,7 +42,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          primary: Colors.black,
+          secondary: Colors.black,
+        ),
+      ),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Padding(
@@ -61,9 +73,7 @@ class _AppControllerState extends State<AppController> {
   );
 
   ConnectionStatus connectionStatus = ConnectionStatus.none;
-
-  final loginController = TextEditingController();
-  final passwordController = TextEditingController();
+  //late final prefs;
 
   @override
   void dispose() {
@@ -75,6 +85,7 @@ class _AppControllerState extends State<AppController> {
   void initState() {
     super.initState();
     connection.addListener(_connectionChecker);
+    isLogged();
   }
 
   ///This function is responsible for setting states of app based on
@@ -104,175 +115,42 @@ class _AppControllerState extends State<AppController> {
       case ConnectionStatus.noEsp:
         return const EspConnectionPage();
       default:
-        if (connectionStatus == ConnectionStatus.restApi) {
+        if (loggedIn == AppLoginStatus.notLoggedIn) {
+          return const LoginPage();
+        } else if (loggedIn == AppLoginStatus.loggingIn) {
+          return const LoadingPage();
+        }
+        if (connectionStatus == ConnectionStatus.restApi &&
+            loggedIn == AppLoginStatus.loggedIn) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text("Hydro"),
-            ),
+                title: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                  const Text("Hydro"),
+                  SizedBox(width: 10),
+                  Image.asset(
+                    "assets/images/farmIcon.png",
+                    scale: 5,
+                  ),
+                  SizedBox(width: 50)
+                ])),
             body: PageView(
               controller: _controller,
               children: const [
-                FansPage(title: "Fans"),
+                FansAndLightsPage(title: "Fans"),
                 HomePage(title: "Home"),
-                LightsPage(title: "Lights"),
+                ChartsPage(title: "Lights"),
               ],
             ),
-            drawer: Drawer(
-              //width: !kIsWeb ? MediaQuery.of(context).size.width * 0.8 : 800,
-              child: Container(
-                margin: const EdgeInsets.all(10),
-                child: ListView(
-                  children: [
-                    const Text("API Credentials:"),
-                    TextField(
-                        controller: loginController,
-                        decoration: const InputDecoration(labelText: "Login"),
-                        onTap: () {
-                          kIsWeb || !(Platform.isAndroid || Platform.isIOS) ?
-                          showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                    title: const Text("Login Dialog"),
-                                    content: SingleChildScrollView(
-                                      child: ListBody(children: [
-                                        TextField(
-                                          controller: loginController,
-                                          decoration: const InputDecoration(
-                                              labelText: "Login"),
-                                        ),
-                                        VirtualKeyboard(
-                                            type: VirtualKeyboardType
-                                                .Alphanumeric,
-                                            textController: loginController)
-                                      ]),
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text("Ok"))
-                                    ],
-                                  ))
-                                  : Null;
-                        }),
-                    TextField(
-                      controller: passwordController,
-                      decoration: const InputDecoration(labelText: "Password"),
-                      onTap: () {
-                          kIsWeb || !(Platform.isAndroid || Platform.isIOS) ?
-                          showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                    title: const Text("Password Dialog"),
-                                    content: SingleChildScrollView(
-                                      child: ListBody(children: [
-                                        TextField(
-                                          controller: passwordController,
-                                          decoration: const InputDecoration(
-                                              labelText: "Password"),
-                                        ),
-                                        VirtualKeyboard(
-                                            type: VirtualKeyboardType
-                                                .Alphanumeric,
-                                            textController: passwordController)
-                                      ]),
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text("Ok"))
-                                    ],
-                                  ))
-                                  : Null;
-                        }
-                    ),
-                    // Container(
-                    //   margin: const EdgeInsets.all(5),
-                    // ),
-                    const Divider(),
-                    ElevatedButton(
-                      onPressed: () {
-                        login = loginController.text;
-                        password = passwordController.text;
-                      },
-                      child: const Text('Save credentials'),
-                    ),
-                    const Divider(),
-                    ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              "Login: " + login + "\nPassword: " + password),
-                        ));
-                      },
-                      child: const Text('Print credentials'),
-                    ),
-                    const Divider(),
-                    ElevatedButton(
-                      onPressed: () async {
-                        var responseToken = await connection.getToken();
-                        switch (responseToken) {
-                          case "Username incorrect":
-                            {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text("Username incorrect"),
-                              ));
-                              break;
-                            }
-                          case "Password incorrect":
-                            {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text("Password incorrect"),
-                              ));
-                              break;
-                            }
-                          default:
-                            {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text("Got token!"),
-                              ));
-                              token = responseToken;
-                              break;
-                            }
-                        }
-                      },
-                      child: const Text('Get token'),
-                    ),
-                    const Divider(),
-                    ElevatedButton(
-                      onPressed: () async {
-                        var resp = await connection.testToken();
-
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(resp),
-                        ));
-                      },
-                      child: const Text('Test token'),
-                    ),
-                    const Divider(),
-                    ElevatedButton(
-                      onPressed: () async {
-                        var data = await getDailyData("2020-10-15", "2020-10-18");
-                        for(var el in data){
-                          print(el);
-                        }
-                        var data2 = await getHourlyData("2020-10-15 10:00:00", "2020-10-16 15:00:00");
-                        for(var el in data2){
-                          print(el);
-                        }
-                      },
-                      child: const Text('Test data by day'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // drawer: Drawer(
+            //   //width: !kIsWeb ? MediaQuery.of(context).size.width * 0.8 : 800,
+            //     child: Container(
+            //       margin: const EdgeInsets.all(10),
+            //       child: const Text("Be soon"),
+            //   ),
+            // )
           );
         } else {
           return Column(children: const [Text("Something gone wrong!")]);

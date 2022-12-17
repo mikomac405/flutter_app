@@ -31,6 +31,7 @@ dependencies:
   dotenv: ^4.0.1
   http: ^0.13.4
   vk: ^0.2.1
+  shared_preferences: ^2.0.15
   flutter:
     sdk: flutter
 
@@ -46,6 +47,8 @@ dependencies:
   network_info_plus: ^2.1.4+1
   base_codecs: ^1.0.1
   numberpicker: ^2.1.1
+  fl_chart: ^0.55.2
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

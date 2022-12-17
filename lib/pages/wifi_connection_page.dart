@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:inzynierka/widgets/wifi_form.dart';
 
@@ -15,7 +16,7 @@ class _WifiConnectionPageState extends State<WifiConnectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("Connect your device to Wifi")),
-        body: Platform.isLinux
+        body: defaultTargetPlatform == TargetPlatform.linux
             ? const WifiForm()
             : const Text("Plese connect your device to the wifi network."));
   }

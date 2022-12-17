@@ -52,7 +52,6 @@ app.*.map.json
 /android/app/release
 
 /web/
-.vscode/
 windows/
 deploy_debug.ps1
 android/
@@ -60,3 +59,4 @@ android/
 /.dart_tool
 /linux
 /macos
+debug_deploy.ps1

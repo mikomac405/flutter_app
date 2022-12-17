@@ -21,7 +21,7 @@ class _WifiFormState extends State<WifiForm> {
   late TextEditingController _controllerText;
 
   void getWifisList() async {
-    List<String> tempList = await connection.getWifiList();
+    List<String> tempList = await connection.wifi.getWifiList();
     setState(() {
       if (tempList.isNotEmpty) {
         ssids = tempList;
@@ -47,9 +47,9 @@ class _WifiFormState extends State<WifiForm> {
   void initState() {
     _controllerText = TextEditingController();
     super.initState();
-    if (Platform.isAndroid) {
+    if (defaultTargetPlatform != TargetPlatform.android) {
       getWifiName();
-    } else if (Platform.isLinux) {
+    } else if (defaultTargetPlatform == TargetPlatform.linux) {
       getWifisList();
     }
   }
@@ -64,7 +64,7 @@ class _WifiFormState extends State<WifiForm> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Platform.isAndroid
+              defaultTargetPlatform != TargetPlatform.android
                   ? TextFormField(
                       controller: TextEditingController(text: ssid),
                       decoration: const InputDecoration(
@@ -125,10 +125,11 @@ class _WifiFormState extends State<WifiForm> {
                                 'Sending data to EPS... Waiting for server response')),
                       );
 
-                      if (Platform.isLinux) {
+                      if (defaultTargetPlatform == TargetPlatform.linux) {
                         // TODO: Add selected item to list!
-                        connection.connectToWifi(ssids.first, pass);
-                      } else if (Platform.isAndroid) {
+                        connection.wifi.connectToWifi(ssids.first, pass);
+                      } else if (defaultTargetPlatform !=
+                          TargetPlatform.android) {
                         List<BluetoothService> services =
                             await androidDevice.discoverServices();
                         //TODO: Check if for loop can be used insted of forEach
@@ -158,7 +159,7 @@ class _WifiFormState extends State<WifiForm> {
                 ),
               ),
               Expanded(
-                child: Platform.isLinux
+                child: defaultTargetPlatform == TargetPlatform.linux
                     ? Container(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         child: VirtualKeyboard(
