@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:inzynierka/globals.dart';
 import 'package:inzynierka/pages/charts_timeframe.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'dart:math' as math;
 
 class ChartsPage extends StatefulWidget {
   const ChartsPage({Key? key, required this.title}) : super(key: key);
@@ -62,7 +63,7 @@ class _ChartsPageState extends State<ChartsPage> {
                   right: 18,
                   left: 12,
                   top: 24,
-                  bottom: 12,
+                  bottom: 60,
                 ),
                 child: LineChart(
                   mainData(), //TODO add diffrent chart
@@ -104,10 +105,20 @@ class _ChartsPageState extends State<ChartsPage> {
       fontSize: 16,
     );
 
-    Widget text = Text(
-      dates[value.toInt()],
-      style: style,
-    );
+    // Widget text = Text(
+    //   chartsData.apiData[value.toInt()]['date'],
+    //   //-dates[value.toInt()],
+    //   style: style,
+    // );
+
+    Widget text = Transform.rotate(
+        angle: -math.pi / 2,
+        child: Container(
+            padding: const EdgeInsets.only(right: 50),
+            child: Text(
+              chartsData.apiData[value.toInt()]['date'],
+              style: style,
+            )));
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
@@ -208,20 +219,21 @@ class _ChartsPageState extends State<ChartsPage> {
         border: Border.all(color: const Color(0xff37434d)),
       ),
       minX: 0,
-      maxX: dates.length.toDouble() - 1,
-      minY: 0,
-      maxY: 100,
+      maxX: chartsData.apiData.length.toDouble() - 1,
+      minY: 18,
+      maxY: 80,
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(0, 60),
-            FlSpot(3, 50),
-            FlSpot(6, 40),
-            FlSpot(9, 30),
-            FlSpot(12, 50),
-            FlSpot(15, 40),
-            FlSpot(31, 30),
-          ],
+          // spots: const [
+          //   FlSpot(0, 60),
+          //   FlSpot(3, 50),
+          //   FlSpot(6, 40),
+          //   FlSpot(9, 30),
+          //   FlSpot(12, 50),
+          //   FlSpot(15, 40),
+          //   FlSpot(31, 30),
+          // ],
+          spots: chartsData.tempSpots,
           isCurved: true,
           gradient: LinearGradient(
             colors: gradientColors,
@@ -246,100 +258,100 @@ class _ChartsPageState extends State<ChartsPage> {
 
 // <---    SECOND CHART  --->
 
-  LineChartData avgData() {
-    return LineChartData(
-      lineTouchData: LineTouchData(enabled: false),
-      gridData: FlGridData(
-        show: true,
-        drawHorizontalLine: false,
-        verticalInterval: 1,
-        horizontalInterval: 1,
-        getDrawingVerticalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingHorizontalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            getTitlesWidget: bottomTitleWidgets,
-            interval: 1,
-          ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: leftTitleWidgets,
-            reservedSize: 42,
-            interval: 1,
-          ),
-        ),
-        topTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        rightTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-      ),
-      borderData: FlBorderData(
-        show: true,
-        border: Border.all(color: const Color(0xff37434d)),
-      ),
-      minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
-      lineBarsData: [
-        LineChartBarData(
-          spots: const [
-            FlSpot(0, 3.44),
-            FlSpot(2.6, 3.44),
-            FlSpot(4.9, 3.44),
-            FlSpot(6.8, 3.44),
-            FlSpot(8, 3.44),
-            FlSpot(9.5, 3.44),
-            FlSpot(11, 3.44),
-          ],
-          isCurved: true,
-          gradient: LinearGradient(
-            colors: [
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-            ],
-          ),
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: FlDotData(
-            show: false,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: [
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // LineChartData avgData() {
+  //   return LineChartData(
+  //     lineTouchData: LineTouchData(enabled: false),
+  //     gridData: FlGridData(
+  //       show: true,
+  //       drawHorizontalLine: false,
+  //       verticalInterval: 1,
+  //       horizontalInterval: 1,
+  //       getDrawingVerticalLine: (value) {
+  //         return FlLine(
+  //           color: const Color(0xff37434d),
+  //           strokeWidth: 1,
+  //         );
+  //       },
+  //       getDrawingHorizontalLine: (value) {
+  //         return FlLine(
+  //           color: const Color(0xff37434d),
+  //           strokeWidth: 1,
+  //         );
+  //       },
+  //     ),
+  //     titlesData: FlTitlesData(
+  //       show: true,
+  //       bottomTitles: AxisTitles(
+  //         sideTitles: SideTitles(
+  //           showTitles: true,
+  //           reservedSize: 30,
+  //           getTitlesWidget: bottomTitleWidgets,
+  //           interval: 1,
+  //         ),
+  //       ),
+  //       leftTitles: AxisTitles(
+  //         sideTitles: SideTitles(
+  //           showTitles: true,
+  //           getTitlesWidget: leftTitleWidgets,
+  //           reservedSize: 42,
+  //           interval: 1,
+  //         ),
+  //       ),
+  //       topTitles: AxisTitles(
+  //         sideTitles: SideTitles(showTitles: false),
+  //       ),
+  //       rightTitles: AxisTitles(
+  //         sideTitles: SideTitles(showTitles: false),
+  //       ),
+  //     ),
+  //     borderData: FlBorderData(
+  //       show: true,
+  //       border: Border.all(color: const Color(0xff37434d)),
+  //     ),
+  //     minX: 0,
+  //     maxX: 15,
+  //     minY: 0,
+  //     maxY: 6,
+  //     lineBarsData: [
+  //       LineChartBarData(
+  //         spots: const [
+  //           FlSpot(0, 3.44),
+  //           FlSpot(2.6, 3.44),
+  //           FlSpot(4.9, 3.44),
+  //           FlSpot(6.8, 3.44),
+  //           FlSpot(8, 3.44),
+  //           FlSpot(9.5, 3.44),
+  //           FlSpot(11, 3.44),
+  //         ],
+  //         isCurved: true,
+  //         gradient: LinearGradient(
+  //           colors: [
+  //             ColorTween(begin: gradientColors[0], end: gradientColors[1])
+  //                 .lerp(0.2)!,
+  //             ColorTween(begin: gradientColors[0], end: gradientColors[1])
+  //                 .lerp(0.2)!,
+  //           ],
+  //         ),
+  //         barWidth: 5,
+  //         isStrokeCapRound: true,
+  //         dotData: FlDotData(
+  //           show: false,
+  //         ),
+  //         belowBarData: BarAreaData(
+  //           show: true,
+  //           gradient: LinearGradient(
+  //             colors: [
+  //               ColorTween(begin: gradientColors[0], end: gradientColors[1])
+  //                   .lerp(0.2)!
+  //                   .withOpacity(0.1),
+  //               ColorTween(begin: gradientColors[0], end: gradientColors[1])
+  //                   .lerp(0.2)!
+  //                   .withOpacity(0.1),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  //}
 }

@@ -14,7 +14,7 @@
                 "--dart-define",
                 "OFFLINE=true",
                 "--dart-define",
-                "IP=http://localhost:8000"
+                "IP=http://srv08.mikr.us:20364"
             ]
         },
         {
