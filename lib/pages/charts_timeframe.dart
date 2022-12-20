@@ -62,7 +62,7 @@ class _ChartsTimeframeState extends State<ChartsTimeframe> {
     }
     return PageView(children: [
       ListView(
-        padding: const EdgeInsets.symmetric(vertical: 150, horizontal: 300),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         children: <Widget>[
           const Text("Please provide timeframe for chart:"),
           const SizedBox(height: 15),

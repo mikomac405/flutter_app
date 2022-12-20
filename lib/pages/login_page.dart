@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: Center(
         child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 150, horizontal: 300),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           children: [
             const Text("API Credentials:"),
             TextField(
