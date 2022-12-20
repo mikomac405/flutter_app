@@ -30,7 +30,7 @@ void main() {
     status.then((value) => farm.update(jsonDecode(value)));
   });
 
-  Timer.periodic(const Duration(seconds: 3000), (timer) async {
+  Timer.periodic(const Duration(seconds: 1000), (timer) async {
     await isLogged();
   });
 

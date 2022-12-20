@@ -24,12 +24,6 @@ AppLoginStatus loggedIn = AppLoginStatus.notLoggedIn;
 ChartData chartsData = ChartData();
 
 Future<void> isLogged() async {
-  if (const bool.hasEnvironment("DEV")) {
-    if (const bool.fromEnvironment("DEV")) {
-      loggedIn = AppLoginStatus.loggedIn;
-      return;
-    }
-  }
   loggedIn = AppLoginStatus.loggingIn;
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString("token") ?? "";

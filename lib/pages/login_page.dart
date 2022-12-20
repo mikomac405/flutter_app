@@ -153,6 +153,7 @@ class _LoginPageState extends State<LoginPage> {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text("Login successful"),
                     ));
+                    loggedIn = AppLoginStatus.loggedIn;
                 }
               },
               child: const Text('Login'),

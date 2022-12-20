@@ -76,6 +76,14 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                             _isPressedFans,
                             style: const TextStyle(fontSize: 30),
                           )),
+                      const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 1)),
+                      ElevatedButton(
+                          onPressed: () {},
+                          child: const Text(
+                            "AUTO",
+                            style: TextStyle(fontSize: 30),
+                          ))
                     ])
               ],
             ),
@@ -135,22 +143,17 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                      onPressed: () {
-                        if (_isPressedLights == "ON") {
-                          setState(() {
-                            _isPressedLights = "OFF";
-                          });
-                          connection.data.setConfig("led", "on", "");
-                        } else {
-                          connection.data.setConfig("led", "off", "");
-                          setState(() {
-                            _isPressedLights = "ON";
-                          });
-                        }
+                      onPressed: () async {
+                        connection.data.setConfig("fan", "set_max_temperature",
+                            _temperatureValue.toString());
+                        await Future.delayed(const Duration(seconds: 2));
+                        connection.data.setConfig("fan", "set_max_humidity",
+                            _humidityValue.toString());
+                        await Future.delayed(const Duration(seconds: 2));
                       },
-                      child: Text(
+                      child: const Text(
                         "SAVE",
-                        style: const TextStyle(fontSize: 30),
+                        style: TextStyle(fontSize: 30),
                       )),
                 ]),
             const SizedBox(height: 50),
@@ -252,18 +255,13 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                      onPressed: () {
-                        if (_isPressedLights == "ON") {
-                          setState(() {
-                            _isPressedLights = "OFF";
-                          });
-                          connection.data.setConfig("led", "on", "");
-                        } else {
-                          connection.data.setConfig("led", "off", "");
-                          setState(() {
-                            _isPressedLights = "ON";
-                          });
-                        }
+                      onPressed: () async {
+                        connection.data.setConfig("led", "set_time_on",
+                            "${_lightsStartHours + 1}:$_lightsStartMinutes");
+                        await Future.delayed(const Duration(seconds: 2));
+                        connection.data.setConfig("led", "set_time_off",
+                            "${_lightsStopHours + 1}:$_lightsStopMinutes");
+                        await Future.delayed(const Duration(seconds: 2));
                       },
                       child: Text(
                         "SAVE",
@@ -322,6 +320,18 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                                       child: Text(
                                         _isPressedFans,
                                         style: const TextStyle(fontSize: 30),
+                                      )),
+                                  const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 10)),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        connection.data
+                                            .setConfig('fan', 'auto', '');
+                                      },
+                                      child: const Text(
+                                        "AUTO",
+                                        style: TextStyle(fontSize: 30),
                                       ))
                                 ]),
                           ])
@@ -384,8 +394,17 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         ElevatedButton(
-                            onPressed: () {
-                              //save data
+                            onPressed: () async {
+                              connection.data.setConfig(
+                                  "fan",
+                                  "set_max_temperature",
+                                  _temperatureValue.toString());
+                              await Future.delayed(const Duration(seconds: 2));
+                              connection.data.setConfig(
+                                  "fan",
+                                  "set_max_humidity",
+                                  _humidityValue.toString());
+                              await Future.delayed(const Duration(seconds: 2));
                             },
                             child: Text(
                               "SAVE",
@@ -498,8 +517,13 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         ElevatedButton(
-                            onPressed: () {
-                              //save data
+                            onPressed: () async {
+                              connection.data.setConfig("led", "set_time_on",
+                                  "${_lightsStartHours + 1}:$_lightsStartMinutes");
+                              await Future.delayed(const Duration(seconds: 2));
+                              connection.data.setConfig("led", "set_time_off",
+                                  "${_lightsStopHours + 1}:$_lightsStopMinutes");
+                              await Future.delayed(const Duration(seconds: 2));
                             },
                             child: Text(
                               "SAVE",

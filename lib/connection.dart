@@ -316,6 +316,7 @@ class DataManager {
     var url = Uri.parse("${connection._baseUrl}/config/" + component + "/set/");
     Map jsonbody = {'command': command, 'args': args};
     var jsonbody1 = json.encode(jsonbody);
+    print(jsonbody1);
     var response = await http.post(url,
         headers: {
           "Content-Type": "application/json",
