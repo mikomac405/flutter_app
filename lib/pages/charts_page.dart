@@ -14,28 +14,17 @@ class ChartsPage extends StatefulWidget {
 }
 
 class _ChartsPageState extends State<ChartsPage> {
-  List<Color> gradientColors = [
-    Color.fromARGB(255, 0, 0, 0),
-    Color.fromARGB(255, 201, 201, 201),
+  List<Color> tempColors = [
+    Color.fromARGB(255, 227, 48, 8),
+    Color.fromARGB(255, 238, 82, 82),
   ];
-
-  bool showAvg = false;
-
-  final now = DateTime.now();
-  List<String> dates = [];
-
-  void genDates() {
-    for (int i = 0; i < 5; i++) {
-      setState(() {
-        dates.add(now.toString());
-        now.add(const Duration(days: 1));
-      });
-    }
-  }
+  List<Color> humidColors = [
+    Color.fromARGB(255, 0, 158, 250),
+    Color.fromARGB(255, 77, 213, 255),
+  ];
 
   @override
   void initState() {
-    genDates();
     chartsData.addListener(_refresh);
     super.initState();
   }
@@ -46,14 +35,17 @@ class _ChartsPageState extends State<ChartsPage> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     if (chartsData.apiData.isEmpty) {
       // ignore: void_checks
       return const ChartsTimeframe();
     } else {
       return Stack(
         children: <Widget>[
-          AspectRatio(
-            aspectRatio: 1.5,
+          Container(
+            height: height,
+            width: width,
             child: DecoratedBox(
               decoration: const BoxDecoration(
                   //color: Color(0xff232d37),
@@ -72,27 +64,27 @@ class _ChartsPageState extends State<ChartsPage> {
               ),
             ),
           ),
-          SizedBox(
-            width: 60,
-            height: 34,
-            child: TextButton(
-              onPressed: () {
-                setState(() {
-                  showAvg = !showAvg;
-                });
-              },
-              child: Text(
-                'Monthly',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: showAvg ? Colors.black.withOpacity(0.5) : Colors.black,
-                ),
-              ),
-            ),
-          ),
-          ElevatedButton(
-              onPressed: () => chartsData.clearData(),
-              child: const Text("Clear data"))
+          Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                  padding: EdgeInsets.only(top: 30.0, right: 25),
+                  child: ElevatedButton(
+                      onPressed: () => chartsData.clearData(),
+                      child: const Text("Clear data")))),
+          Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                  padding: EdgeInsets.only(top: 70.0, right: 28),
+                  child: const Text("Temperature",
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 227, 48, 8))))),
+          Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                  padding: EdgeInsets.only(top: 100.0, right: 40),
+                  child: const Text("Humidity",
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 0, 158, 250)))))
         ],
       );
     }
@@ -224,134 +216,44 @@ class _ChartsPageState extends State<ChartsPage> {
       maxY: 80,
       lineBarsData: [
         LineChartBarData(
-          // spots: const [
-          //   FlSpot(0, 60),
-          //   FlSpot(3, 50),
-          //   FlSpot(6, 40),
-          //   FlSpot(9, 30),
-          //   FlSpot(12, 50),
-          //   FlSpot(15, 40),
-          //   FlSpot(31, 30),
-          // ],
-          spots: chartsData.tempSpots,
+          spots: chartsData.humSpots,
           isCurved: true,
           gradient: LinearGradient(
-            colors: gradientColors,
+            colors: humidColors,
           ),
           barWidth: 5,
           isStrokeCapRound: true,
           dotData: FlDotData(
-            show: false,
+            show: true,
           ),
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
-              colors: gradientColors
-                  .map((color) => color.withOpacity(0.3))
-                  .toList(),
+              colors:
+                  humidColors.map((color) => color.withOpacity(0.3)).toList(),
+            ),
+          ),
+        ),
+        LineChartBarData(
+          spots: chartsData.tempSpots,
+          isCurved: true,
+          gradient: LinearGradient(
+            colors: tempColors,
+          ),
+          barWidth: 5,
+          isStrokeCapRound: true,
+          dotData: FlDotData(
+            show: true,
+          ),
+          belowBarData: BarAreaData(
+            show: true,
+            gradient: LinearGradient(
+              colors:
+                  tempColors.map((color) => color.withOpacity(0.3)).toList(),
             ),
           ),
         ),
       ],
     );
   }
-
-// <---    SECOND CHART  --->
-
-  // LineChartData avgData() {
-  //   return LineChartData(
-  //     lineTouchData: LineTouchData(enabled: false),
-  //     gridData: FlGridData(
-  //       show: true,
-  //       drawHorizontalLine: false,
-  //       verticalInterval: 1,
-  //       horizontalInterval: 1,
-  //       getDrawingVerticalLine: (value) {
-  //         return FlLine(
-  //           color: const Color(0xff37434d),
-  //           strokeWidth: 1,
-  //         );
-  //       },
-  //       getDrawingHorizontalLine: (value) {
-  //         return FlLine(
-  //           color: const Color(0xff37434d),
-  //           strokeWidth: 1,
-  //         );
-  //       },
-  //     ),
-  //     titlesData: FlTitlesData(
-  //       show: true,
-  //       bottomTitles: AxisTitles(
-  //         sideTitles: SideTitles(
-  //           showTitles: true,
-  //           reservedSize: 30,
-  //           getTitlesWidget: bottomTitleWidgets,
-  //           interval: 1,
-  //         ),
-  //       ),
-  //       leftTitles: AxisTitles(
-  //         sideTitles: SideTitles(
-  //           showTitles: true,
-  //           getTitlesWidget: leftTitleWidgets,
-  //           reservedSize: 42,
-  //           interval: 1,
-  //         ),
-  //       ),
-  //       topTitles: AxisTitles(
-  //         sideTitles: SideTitles(showTitles: false),
-  //       ),
-  //       rightTitles: AxisTitles(
-  //         sideTitles: SideTitles(showTitles: false),
-  //       ),
-  //     ),
-  //     borderData: FlBorderData(
-  //       show: true,
-  //       border: Border.all(color: const Color(0xff37434d)),
-  //     ),
-  //     minX: 0,
-  //     maxX: 15,
-  //     minY: 0,
-  //     maxY: 6,
-  //     lineBarsData: [
-  //       LineChartBarData(
-  //         spots: const [
-  //           FlSpot(0, 3.44),
-  //           FlSpot(2.6, 3.44),
-  //           FlSpot(4.9, 3.44),
-  //           FlSpot(6.8, 3.44),
-  //           FlSpot(8, 3.44),
-  //           FlSpot(9.5, 3.44),
-  //           FlSpot(11, 3.44),
-  //         ],
-  //         isCurved: true,
-  //         gradient: LinearGradient(
-  //           colors: [
-  //             ColorTween(begin: gradientColors[0], end: gradientColors[1])
-  //                 .lerp(0.2)!,
-  //             ColorTween(begin: gradientColors[0], end: gradientColors[1])
-  //                 .lerp(0.2)!,
-  //           ],
-  //         ),
-  //         barWidth: 5,
-  //         isStrokeCapRound: true,
-  //         dotData: FlDotData(
-  //           show: false,
-  //         ),
-  //         belowBarData: BarAreaData(
-  //           show: true,
-  //           gradient: LinearGradient(
-  //             colors: [
-  //               ColorTween(begin: gradientColors[0], end: gradientColors[1])
-  //                   .lerp(0.2)!
-  //                   .withOpacity(0.1),
-  //               ColorTween(begin: gradientColors[0], end: gradientColors[1])
-  //                   .lerp(0.2)!
-  //                   .withOpacity(0.1),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  //}
 }
