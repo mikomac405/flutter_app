@@ -95,6 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                                   child: ListBody(children: [
                                     TextField(
                                       controller: passwordController,
+                                      obscureText: true,
                                       decoration: const InputDecoration(
                                           labelText: "Password"),
                                     ),
