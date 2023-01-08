@@ -21,13 +21,16 @@ import '../globals.dart';
 void main() {
   connection = ConnectionManager();
 
-  Timer.periodic(const Duration(seconds: 10), (timer) {
+  Timer.periodic(const Duration(seconds: 60), (timer) {
     connection.checkConnectionStatus();
   });
 
-  Timer.periodic(const Duration(seconds: 30), (timer) {
+  Timer.periodic(const Duration(seconds: 20), (timer) {
     var status = connection.data.getComponentsStatus();
-    status.then((value) => farm.update(jsonDecode(value)));
+    status.then((value) {
+      print(value);
+      farm.update(jsonDecode(value));
+    });
   });
 
   Timer.periodic(const Duration(seconds: 1000), (timer) async {
@@ -71,7 +74,8 @@ class _AppControllerState extends State<AppController> {
   final PageController _controller = PageController(
     initialPage: 1,
   );
-
+  final loginController = TextEditingController();
+  final passwordController = TextEditingController();
   ConnectionStatus connectionStatus = ConnectionStatus.none;
   //late final prefs;
 
@@ -85,7 +89,17 @@ class _AppControllerState extends State<AppController> {
   void initState() {
     super.initState();
     connection.addListener(_connectionChecker);
-    isLogged();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getCredentials();
+    });
+    //isLogged();
+  }
+
+  _getCredentials() async {
+    // obtain shared preferences
+    final prefs = await SharedPreferences.getInstance();
+    loginController.text = prefs.getString('login') ?? "";
+    passwordController.text = prefs.getString('password') ?? "";
   }
 
   ///This function is responsible for setting states of app based on
@@ -94,6 +108,10 @@ class _AppControllerState extends State<AppController> {
     setState(() {
       connectionStatus = connection.connectionStatus;
       if (kDebugMode) {
+        if (connectionStatus == ConnectionStatus.restApi) {
+          var status = connection.data.getComponentsStatus();
+          status.then((value) => farm.update(jsonDecode(value)));
+        }
         print(connectionStatus);
       }
     });
@@ -116,7 +134,145 @@ class _AppControllerState extends State<AppController> {
         return const EspConnectionPage();
       default:
         if (loggedIn == AppLoginStatus.notLoggedIn) {
-          return const LoginPage();
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text("App"),
+            ),
+            body: Center(
+              child: ListView(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                children: [
+                  const Text("API Credentials:"),
+                  TextField(
+                      controller: loginController,
+                      decoration: const InputDecoration(labelText: "Login"),
+                      onTap: () {
+                        !kIsWeb ||
+                                !(defaultTargetPlatform ==
+                                        TargetPlatform.android ||
+                                    defaultTargetPlatform == TargetPlatform.iOS)
+                            ? showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                      title: const Text("Login Dialog"),
+                                      content: SingleChildScrollView(
+                                        child: ListBody(children: [
+                                          TextField(
+                                            controller: loginController,
+                                            decoration: const InputDecoration(
+                                                labelText: "Login"),
+                                          ),
+                                          VirtualKeyboard(
+                                              type: VirtualKeyboardType
+                                                  .Alphanumeric,
+                                              textController: loginController)
+                                        ]),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("Ok"))
+                                      ],
+                                    ))
+                            : Null;
+                      }),
+                  TextField(
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(labelText: "Password"),
+                      onTap: () {
+                        !kIsWeb ||
+                                !(defaultTargetPlatform ==
+                                        TargetPlatform.android ||
+                                    defaultTargetPlatform == TargetPlatform.iOS)
+                            ? showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                      title: const Text("Password Dialog"),
+                                      content: SingleChildScrollView(
+                                        child: ListBody(children: [
+                                          TextField(
+                                            controller: passwordController,
+                                            obscureText: true,
+                                            decoration: const InputDecoration(
+                                                labelText: "Password"),
+                                          ),
+                                          VirtualKeyboard(
+                                              type: VirtualKeyboardType
+                                                  .Alphanumeric,
+                                              textController:
+                                                  passwordController)
+                                        ]),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("Ok"))
+                                      ],
+                                    ))
+                            : Null;
+                      }),
+                  const Divider(),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setString(
+                          "login",
+                          loginController.text
+                              .replaceAll("\n", "")
+                              .replaceAll(" ", ""));
+                      prefs.setString(
+                          "password",
+                          passwordController.text
+                              .replaceAll("\n", "")
+                              .replaceAll(" ", ""));
+                      final result = await connection.data.authUser();
+                      switch (result) {
+                        case LoginStatus.noPassword:
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text("Empty password"),
+                          ));
+                          break;
+                        case LoginStatus.noUsername:
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text("Empty username"),
+                          ));
+                          break;
+                        case LoginStatus.wrongPassword:
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text("Wrong password"),
+                          ));
+                          break;
+                        case LoginStatus.wrongUsername:
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text("Wrong username"),
+                          ));
+                          break;
+                        default:
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text("Login successful"),
+                          ));
+                          loggedIn = AppLoginStatus.loggedIn;
+                          setState(() {});
+                        //await isLogged();
+                      }
+                    },
+                    child: const Text('Login'),
+                  ),
+                ],
+              ),
+            ),
+          );
         } else if (loggedIn == AppLoginStatus.loggingIn) {
           return const LoadingPage();
         }

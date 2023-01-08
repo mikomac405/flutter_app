@@ -115,7 +115,7 @@ class EspConnectionPageState extends State<EspConnectionPage> {
         appBar: AppBar(
           title: const Text("WiFi form"),
         ),
-        body: defaultTargetPlatform != TargetPlatform.android
+        body: defaultTargetPlatform == TargetPlatform.android
             ? (isConnected && !isConnecting)
                 ? const WifiForm()
                 : Column(children: [

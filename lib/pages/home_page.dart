@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
                       const Text("AREATOR",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
-                      if (farm.leds.state == 0) ...[
+                      if (farm.oxygenator.state == 1) ...[
                         Image.asset('assets/images/oxygON.png',
                             width: 150, height: 105),
                       ] else ...[
@@ -59,13 +59,15 @@ class _HomePageState extends State<HomePage> {
                       const Text("WATER TANK",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
-                      if (farm.leds.state == 0) ...[
-                        Image.asset('assets/images/fullTank.png',
-                            width: 150, height: 105),
-                      ] else ...[
-                        Image.asset('assets/images/emptyTank.png',
-                            width: 150, height: 105),
-                      ],
+                      Image.asset('assets/images/fullTank.png',
+                          width: 150, height: 105),
+                      // if (farm.waterLvl.state == 0) ...[
+                      //   Image.asset('assets/images/fullTank.png',
+                      //       width: 150, height: 105),
+                      // ] else ...[
+                      //   Image.asset('assets/images/emptyTank.png',
+                      //       width: 150, height: 105),
+                      // ],
                     ])
               ]),
           const SizedBox(height: 50),
@@ -80,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                       const Text("FANS",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
-                      if (farm.leds.state == 0) ...[
+                      if (farm.fan.status == 1) ...[
                         Image.asset('assets/images/fanOn.png',
                             width: 150, height: 150),
                       ] else ...[
@@ -95,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                       const Text("LIGHTS",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
-                      if (farm.leds.state == 0) ...[
+                      if (farm.leds.state == 1) ...[
                         Image.asset('assets/images/onLights.png',
                             width: 150, height: 112.5),
                       ] else ...[
@@ -162,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                       const Text("AREATOR",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
-                      if (farm.leds.state == 0) ...[
+                      if (farm.oxygenator.state == 1) ...[
                         Image.asset('assets/images/oxygON.png',
                             width: 150, height: 105),
                       ] else ...[
@@ -177,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                       const Text("LIGHTS",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
-                      if (farm.leds.state == 0) ...[
+                      if (farm.leds.state == 1) ...[
                         Image.asset('assets/images/onLights.png',
                             width: 150, height: 112.5),
                       ] else ...[
@@ -192,13 +194,15 @@ class _HomePageState extends State<HomePage> {
                       const Text("WATER TANK",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
-                      if (farm.leds.state == 0) ...[
-                        Image.asset('assets/images/fullTank.png',
-                            width: 150, height: 105),
-                      ] else ...[
-                        Image.asset('assets/images/emptyTank.png',
-                            width: 150, height: 105),
-                      ],
+                      Image.asset('assets/images/fullTank.png',
+                          width: 150, height: 105),
+                      // if (farm.waterLvl.state == 1) ...[
+                      //   Image.asset('assets/images/fullTank.png',
+                      //       width: 150, height: 105),
+                      // ] else ...[
+                      //   Image.asset('assets/images/emptyTank.png',
+                      //       width: 150, height: 105),
+                      // ],
                     ])
               ]),
           const SizedBox(height: 50),
@@ -227,7 +231,7 @@ class _HomePageState extends State<HomePage> {
                       const Text("FANS",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
-                      if (farm.leds.state == 0) ...[
+                      if (farm.fan.status == 1) ...[
                         Image.asset('assets/images/fanOn.png',
                             width: 150, height: 150),
                       ] else ...[

@@ -1,0 +1,2 @@
+#!/bin/bash
+~/Documents/flutter-engine-binaries-for-arm-engine_ffe7b86a1e5b5cb63c8385ae1adc759e372ee8f4/arm/gen_snapshot_linux_x64_release --deterministic --snapshot_kind=app-aot-elf --elf=build/flutter_assets/app.so --strip build/kernel_snapshot.dill

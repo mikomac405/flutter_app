@@ -155,6 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                       content: Text("Login successful"),
                     ));
                     loggedIn = AppLoginStatus.loggedIn;
+                  //await isLogged();
                 }
               },
               child: const Text('Login'),

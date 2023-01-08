@@ -32,14 +32,14 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
 
   int _temperatureValue = farm.fan.maxTemp;
   int _humidityValue = farm.fan.maxHumidity;
-  int _fanPowerStatus = farm.fan.status;
-  int _lightsStartHours = 9;
-  int _lightsStartMinutes = 30;
-  int _lightsStopHours = 18;
-  int _lightsStopMinutes = 30;
-  RangeValues _currentRangeValues = const RangeValues(4, 12);
-  String _isPressedLights = "ON";
-  String _isPressedFans = "ON";
+  //int _fanPowerStatus = farm.fan.status;
+  int _lightsStartHours = int.parse(farm.leds.lightsOn.split(':')[0]);
+  int _lightsStartMinutes = int.parse(farm.leds.lightsOn.split(':')[1]);
+  int _lightsStopHours = int.parse(farm.leds.lightsOff.split(':')[0]);
+  int _lightsStopMinutes = int.parse(farm.leds.lightsOff.split(':')[1]);
+  //RangeValues _currentRangeValues = const RangeValues(4, 12);
+  String _isPressedLights = farm.leds.state == 1 ? "ON" : "OFF";
+  String _isPressedFans = farm.fan.status == 1 ? "ON" : "OFF";
   Widget portraitMode() {
     return Scaffold(
       body: Center(
@@ -64,9 +64,9 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                                 _isPressedFans = "ON";
                               });
 
-                              connection.data.setConfig('fan', 'stop', '');
-                            } else {
                               connection.data.setConfig('fan', 'start', '');
+                            } else {
+                              connection.data.setConfig('fan', 'stop', '');
                               setState(() {
                                 _isPressedFans = "OFF";
                               });
@@ -169,9 +169,9 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                       setState(() {
                         _isPressedLights = "OFF";
                       });
-                      connection.data.setConfig("led", "on", "");
-                    } else {
                       connection.data.setConfig("led", "off", "");
+                    } else {
+                      connection.data.setConfig("led", "on", "");
                       setState(() {
                         _isPressedLights = "ON";
                       });
@@ -308,10 +308,10 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                                             _isPressedFans = "OFF";
                                           });
                                           connection.data
-                                              .setConfig('fan', 'start', '');
+                                              .setConfig('fan', 'stop', '');
                                         } else {
                                           connection.data
-                                              .setConfig('fan', 'stop', '');
+                                              .setConfig('fan', 'start', '');
                                           setState(() {
                                             _isPressedFans = "ON";
                                           });
@@ -431,9 +431,9 @@ class _FansAndLightsState extends State<FansAndLightsPage> {
                                 setState(() {
                                   _isPressedLights = "OFF";
                                 });
-                                connection.data.setConfig("led", "on", "");
-                              } else {
                                 connection.data.setConfig("led", "off", "");
+                              } else {
+                                connection.data.setConfig("led", "on", "");
                                 setState(() {
                                   _isPressedLights = "ON";
                                 });

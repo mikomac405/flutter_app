@@ -29,6 +29,12 @@ class _ChartsPageState extends State<ChartsPage> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    chartsData.removeListener(_refresh);
+    super.dispose();
+  }
+
   void _refresh() {
     setState(() {});
   }
